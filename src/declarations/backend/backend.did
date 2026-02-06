@@ -1,0 +1,502 @@
+type http_request_result = 
+ record {
+   body: blob;
+   headers: vec http_header;
+   status: nat;
+ };
+type http_header = 
+ record {
+   name: text;
+   value: text;
+ };
+type WorkshopSession = 
+ record {
+   attendees: nat;
+   created: Time;
+   date: Time;
+   description: text;
+   duration: nat;
+   id: text;
+   isLive: bool;
+   title: text;
+   "type": text;
+ };
+type WatchParty = 
+ record {
+   chatHistory: List_1;
+   host: principal;
+   id: text;
+   isActive: bool;
+   movieTitle: text;
+   participants: List_2;
+   reactions: List_3;
+   startTime: Time;
+ };
+type VisualDisplay = 
+ record {
+   content: text;
+   "type": text;
+ };
+type UserRole = 
+ variant {
+   admin;
+   guest;
+   user;
+ };
+type UserProfile = 
+ record {
+   dataSaverMode: bool;
+   favoriteMovies: List;
+   watchPartyHistory: List;
+ };
+type UserApprovalInfo = 
+ record {
+   "principal": principal;
+   status: ApprovalStatus;
+ };
+type TransformationOutput = 
+ record {
+   body: blob;
+   headers: vec http_header;
+   status: nat;
+ };
+type TransformationInput = 
+ record {
+   context: blob;
+   response: http_request_result;
+ };
+type TopPick = 
+ record {
+   curatorName: text;
+   movieTitle: text;
+   reason: text;
+   recommendation: text;
+ };
+type Time = int;
+type SubscriptionTier = 
+ record {
+   accessType: text;
+   features: vec text;
+   name: text;
+   price: nat;
+ };
+type StripeSessionStatus = 
+ variant {
+   completed: record {
+                response: text;
+                userPrincipal: opt text;
+              };
+   failed: record {error: text;};
+ };
+type StripeConfiguration = 
+ record {
+   allowedCountries: vec text;
+   secretKey: text;
+ };
+type SportsPlaylist = 
+ record {
+   created: Time;
+   isPublic: bool;
+   name: text;
+   sportsContentIds: List;
+ };
+type SportsCreatorSubmission = 
+ record {
+   contactInfo: text;
+   created: Time;
+   creatorName: text;
+   description: text;
+   eventInfo: text;
+   id: text;
+   paymentPreferences: text;
+   sportType: text;
+   status: text;
+   title: text;
+ };
+type SportsContent = 
+ record {
+   accessTier: text;
+   averageRating: nat;
+   created: Time;
+   creator: principal;
+   description: text;
+   eventInfo: text;
+   reviewCount: nat;
+   sportType: text;
+   thumbnailPath: text;
+   title: text;
+   videoPath: text;
+ };
+type ShoppingItem = 
+ record {
+   currency: text;
+   priceInCents: nat;
+   productDescription: text;
+   productName: text;
+   quantity: nat;
+ };
+type ReviewAssignment = 
+ record {
+   assigned: Time;
+   feedback: text;
+   id: text;
+   reviewer: principal;
+   stage: text;
+   status: text;
+   submissionId: text;
+ };
+type RevenueShare = 
+ record {
+   paymentMethod: PaymentMethod;
+   payoutHistory: List_4;
+   pendingPayouts: nat;
+   totalEarnings: nat;
+ };
+type Reaction = 
+ record {
+   reactionType: text;
+   timestamp: Time;
+   user: principal;
+ };
+type Rating = 
+ record {
+   review: text;
+   score: nat;
+ };
+type RSVP = 
+ record {
+   attending: bool;
+   inviteCode: text;
+   name: text;
+   timestamp: Time;
+ };
+type Playlist = 
+ record {
+   musicVideoIds: List;
+   name: text;
+ };
+type PayoutRecord = 
+ record {
+   amount: nat;
+   date: Time;
+   method: PaymentMethod;
+   status: text;
+ };
+type PaymentMethod = 
+ variant {
+   crypto: text;
+   mPesa: text;
+   mobileMoney: text;
+ };
+type PartnershipBenefit = 
+ record {
+   description: text;
+   name: text;
+   "type": text;
+ };
+type OnboardingModule = 
+ record {
+   content: text;
+   created: Time;
+   description: text;
+   id: text;
+   isCompleted: bool;
+   progress: nat;
+   title: text;
+   "type": text;
+ };
+type MusicVideo = 
+ record {
+   artist: text;
+   description: text;
+   genre: text;
+   thumbnailPath: text;
+   title: text;
+   videoPath: text;
+ };
+type MusicTrack = 
+ record {
+   album: text;
+   artist: text;
+   artistProfile: principal;
+   audioPath: text;
+   averageRating: nat;
+   coverImagePath: text;
+   genre: text;
+   playCount: nat;
+   price: nat;
+   releaseDate: Time;
+   reviewCount: nat;
+   title: text;
+ };
+type MusicPlaylist = 
+ record {
+   created: Time;
+   isPublic: bool;
+   musicTrackIds: List;
+   name: text;
+ };
+type Movie = 
+ record {
+   averageRating: nat;
+   coverImagePath: text;
+   description: text;
+   reviewCount: nat;
+   title: text;
+   trailerPath: text;
+ };
+type MentorshipProgram = 
+ record {
+   endDate: Time;
+   id: text;
+   mentee: principal;
+   mentor: principal;
+   progress: nat;
+   startDate: Time;
+   status: text;
+   topic: text;
+ };
+type LiveMatch = 
+ record {
+   countdown: nat;
+   created: Time;
+   date: Time;
+   id: text;
+   status: text;
+   teamInfo: text;
+   time: text;
+   title: text;
+   venue: text;
+ };
+type List_4 = 
+ opt record {
+       PayoutRecord;
+       List_4;
+     };
+type List_3 = 
+ opt record {
+       Reaction;
+       List_3;
+     };
+type List_2 = 
+ opt record {
+       principal;
+       List_2;
+     };
+type List_1 = 
+ opt record {
+       ChatMessage;
+       List_1;
+     };
+type List = 
+ opt record {
+       text;
+       List;
+     };
+type InviteCode = 
+ record {
+   code: text;
+   created: Time;
+   used: bool;
+ };
+type FlexibleAccessOption = 
+ record {
+   description: text;
+   name: text;
+   "type": text;
+ };
+type FilmmakerSubmission = 
+ record {
+   cast: text;
+   category: text;
+   contactInfo: text;
+   created: Time;
+   description: text;
+   director: text;
+   id: text;
+   paymentPreferences: text;
+   posterPath: text;
+   rating: text;
+   rightsVerification: text;
+   status: text;
+   title: text;
+   trailerPath: text;
+ };
+type FileReference = 
+ record {
+   hash: text;
+   path: text;
+ };
+type ExtrasContent = 
+ record {
+   associatedMovie: text;
+   contentType: text;
+   description: text;
+   thumbnailPath: text;
+   title: text;
+   videoPath: text;
+ };
+type CreatorSubmission = 
+ record {
+   category: text;
+   contactInfo: text;
+   creatorName: text;
+   description: text;
+   filmTitle: text;
+ };
+type ChatMessage = 
+ record {
+   message: text;
+   sender: principal;
+   timestamp: Time;
+ };
+type BusinessModel = 
+ record {
+   flexibleAccessOptions: vec FlexibleAccessOption;
+   partnershipBenefits: vec PartnershipBenefit;
+   subscriptionTiers: vec SubscriptionTier;
+   visualDisplays: vec VisualDisplay;
+ };
+type BulkUploadItem = 
+ record {
+   coverImagePath: text;
+   description: text;
+   title: text;
+   trailerPath: text;
+ };
+type ArtistProfile = 
+ record {
+   bio: text;
+   earnings: nat;
+   followers: nat;
+   musicTrackIds: List;
+   name: text;
+   photoPath: text;
+   socialLinks: List;
+   verified: bool;
+ };
+type ApprovalStatus = 
+ variant {
+   approved;
+   pending;
+   rejected;
+ };
+service : {
+  addExtrasContent: (title: text, description: text, contentType: text,
+   thumbnailPath: text, videoPath: text, associatedMovie: text) -> ();
+  addFavoriteMovie: (movieTitle: text) -> ();
+  addMentorshipProgram: (mentee: principal, topic: text) -> ();
+  addMovie: (title: text, description: text, coverImagePath: text,
+   trailerPath: text) -> ();
+  addMusicTrack: (title: text, artist: text, album: text, genre: text,
+   audioPath: text, coverImagePath: text, price: nat) -> ();
+  addMusicTrackToPlaylist: (playlistName: text, musicTrackTitle: text) -> ();
+  addMusicVideo: (title: text, artist: text, description: text,
+   thumbnailPath: text, videoPath: text, genre: text) -> ();
+  addMusicVideoToPlaylist: (playlistName: text, musicVideoTitle: text) -> ();
+  addOnboardingModule: (title: text, description: text, content: text,
+   "type": text) -> ();
+  addSportsContent: (title: text, description: text, sportType: text,
+   eventInfo: text, thumbnailPath: text, videoPath: text, accessTier:
+   text) -> ();
+  addSportsContentToPlaylist: (playlistName: text, sportsContentTitle:
+   text) -> ();
+  addTopPick: (movieTitle: text, curatorName: text, recommendation: text,
+   reason: text) -> ();
+  addWorkshopSession: (title: text, description: text, "type": text,
+   duration: nat, isLive: bool) -> ();
+  assignCallerUserRole: (user: principal, role: UserRole) -> ();
+  assignReview: (submissionId: text, stage: text) -> ();
+  bulkUploadMovies: (items: vec BulkUploadItem) -> ();
+  createArtistProfile: (name: text, bio: text, photoPath: text, socialLinks:
+   vec text) -> ();
+  createCheckoutSession: (items: vec ShoppingItem, successUrl: text,
+   cancelUrl: text) -> (text);
+  createLiveMatch: (title: text, date: Time, time: text, venue: text,
+   teamInfo: text) -> ();
+  createMusicPlaylist: (name: text, isPublic: bool) -> ();
+  createPlaylist: (name: text) -> ();
+  createSportsPlaylist: (name: text, isPublic: bool) -> ();
+  createWatchParty: (movieTitle: text) -> (text);
+  dropFileReference: (path: text) -> ();
+  generateInviteCode: () -> (text);
+  getAllArtistProfiles: () -> (vec ArtistProfile) query;
+  getAllExtrasContent: () -> (vec ExtrasContent) query;
+  getAllLiveMatches: () -> (vec LiveMatch) query;
+  getAllMovies: () -> (vec Movie) query;
+  getAllMusicTracks: () -> (vec MusicTrack) query;
+  getAllMusicVideos: () -> (vec MusicVideo) query;
+  getAllRSVPs: () -> (vec RSVP) query;
+  getAllSportsContent: () -> (vec SportsContent) query;
+  getArtistProfile: () -> (opt ArtistProfile) query;
+  getBusinessModel: () -> (BusinessModel) query;
+  getCallerUserProfile: () -> (opt UserProfile) query;
+  getCallerUserRole: () -> (UserRole) query;
+  getCreatorSubmissions: () -> (vec CreatorSubmission) query;
+  getDataSaverMode: () -> (bool) query;
+  getExtrasByMovie: (movieTitle: text) -> (vec ExtrasContent) query;
+  getExtrasContent: (title: text) -> (opt ExtrasContent) query;
+  getFavoriteMovies: () -> (vec text) query;
+  getFileReference: (path: text) -> (FileReference) query;
+  getFilmmakerSubmissions: () -> (vec FilmmakerSubmission) query;
+  getInviteCodes: () -> (vec InviteCode) query;
+  getLiveMatch: (id: text) -> (opt LiveMatch) query;
+  getMentorshipPrograms: () -> (vec MentorshipProgram) query;
+  getMovie: (title: text) -> (opt Movie) query;
+  getMovieRatings: (movieTitle: text) -> (vec Rating) query;
+  getMusicPlaylists: () -> (vec MusicPlaylist) query;
+  getMusicTrack: (title: text) -> (opt MusicTrack) query;
+  getMusicVideo: (title: text) -> (opt MusicVideo) query;
+  getOnboardingModules: () -> (vec OnboardingModule) query;
+  getPlaylists: () -> (vec Playlist) query;
+  getRevenueShare: () -> (RevenueShare) query;
+  getRevenueSharingInfo: () -> (vec RevenueShare) query;
+  getReviewAssignments: () -> (vec ReviewAssignment) query;
+  getSportsContent: (title: text) -> (opt SportsContent) query;
+  getSportsCreatorSubmissions: () -> (vec SportsCreatorSubmission) query;
+  getSportsPlaylists: () -> (vec SportsPlaylist) query;
+  getStripeSessionStatus: (sessionId: text) -> (StripeSessionStatus);
+  getTopPicks: () -> (vec TopPick) query;
+  getUserProfile: (user: principal) -> (opt UserProfile) query;
+  getWatchParty: (partyId: text) -> (opt WatchParty) query;
+  getWatchPartyHistory: () -> (vec text) query;
+  getWorkshopSessions: () -> (vec WorkshopSession) query;
+  initializeAccessControl: () -> ();
+  isCallerAdmin: () -> (bool) query;
+  isCallerApproved: () -> (bool) query;
+  isStripeConfigured: () -> (bool) query;
+  listApprovals: () -> (vec UserApprovalInfo) query;
+  listFileReferences: () -> (vec FileReference) query;
+  rateMovie: (movieTitle: text, score: nat, review: text) -> ();
+  registerFileReference: (path: text, hash: text) -> ();
+  removeFavoriteMovie: (movieTitle: text) -> ();
+  removeMusicTrackFromPlaylist: (playlistName: text, musicTrackTitle:
+   text) -> ();
+  removeMusicVideoFromPlaylist: (playlistName: text, musicVideoTitle:
+   text) -> ();
+  removeSportsContentFromPlaylist: (playlistName: text, sportsContentTitle:
+   text) -> ();
+  requestApproval: () -> ();
+  saveCallerUserProfile: (profile: UserProfile) -> ();
+  searchLiveMatches: (searchTerm: text) -> (vec LiveMatch) query;
+  searchMovies: (searchTerm: text) -> (vec Movie) query;
+  searchMusicTracks: (searchTerm: text) -> (vec MusicTrack) query;
+  searchMusicVideos: (searchTerm: text) -> (vec MusicVideo) query;
+  searchSportsContent: (searchTerm: text) -> (vec SportsContent) query;
+  setApproval: (user: principal, status: ApprovalStatus) -> ();
+  setDataSaverMode: (enabled: bool) -> ();
+  setPaymentMethod: (method: PaymentMethod) -> ();
+  setStripeConfiguration: (config: StripeConfiguration) -> ();
+  submitCreatorFilm: (filmTitle: text, description: text, creatorName: 
+   text, contactInfo: text, category: text) -> ();
+  submitFilmmakerSubmission: (title: text, description: text, director: 
+   text, cast: text, category: text, rating: text, posterPath: text,
+   trailerPath: text, rightsVerification: text, contactInfo: text,
+   paymentPreferences: text) -> ();
+  submitRSVP: (name: text, attending: bool, inviteCode: text) -> ();
+  submitSportsCreatorSubmission: (title: text, description: text,
+   creatorName: text, sportType: text, eventInfo: text, contactInfo: 
+   text, paymentPreferences: text) -> ();
+  transform: (input: TransformationInput) -> (TransformationOutput) query;
+  updateBusinessModel: (newBusinessModel: BusinessModel) -> ();
+}
