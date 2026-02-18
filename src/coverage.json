@@ -1,0 +1,154 @@
+{
+  "kind": "coverage_report",
+  "version": "1.0",
+  "generatedAt": "2026-02-18T23:12:28.139Z",
+  "sources": {
+    "buildRequest": true,
+    "implementationPlan": true
+  },
+  "requirements": {
+    "total": 5,
+    "implemented": 5,
+    "items": [
+      {
+        "id": "REQ-1",
+        "summary": "Implement low-bandwidth mode toggle in the video player that automatically adjusts streaming quality based on the user's connection speed. The system should detect connection speed and switch between quality levels (240p, 360p, 480p, 720p, 1080p) dynamically without user intervention when low-bandwidth mode is enabled.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/hooks/useBandwidthMonitor.ts",
+          "frontend/src/hooks/useLowBandwidthMode.ts",
+          "frontend/src/components/VideoQualitySelector.tsx",
+          "frontend/src/components/MovieDialog.tsx",
+          "frontend/src/components/WatchPartyView.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/hooks/useBandwidthMonitor.ts",
+          "frontend/src/hooks/useLowBandwidthMode.ts",
+          "frontend/src/components/VideoQualitySelector.tsx",
+          "frontend/src/components/MovieDialog.tsx"
+        ]
+      },
+      {
+        "id": "REQ-2",
+        "summary": "Add data usage indicators throughout the platform that show MB consumed per video during playback. Display estimated data usage before video starts based on selected quality, and real-time data consumption during playback. Include cumulative daily/weekly data usage stats in user settings.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/hooks/useDataUsageTracker.ts",
+          "frontend/src/components/DataUsageIndicator.tsx",
+          "frontend/src/components/DataUsageEstimator.tsx",
+          "frontend/src/components/DataUsageSettings.tsx",
+          "frontend/src/components/MovieDialog.tsx",
+          "frontend/src/components/UserProfile.tsx",
+          "frontend/src/components/WatchPartyView.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/hooks/useDataUsageTracker.ts",
+          "frontend/src/components/DataUsageIndicator.tsx",
+          "frontend/src/components/DataUsageEstimator.tsx",
+          "frontend/src/components/DataUsageSettings.tsx",
+          "frontend/src/components/MovieDialog.tsx",
+          "frontend/src/components/UserProfile.tsx"
+        ]
+      },
+      {
+        "id": "REQ-3",
+        "summary": "Implement Progressive Web App (PWA) features including offline access for downloaded content, home screen installation prompt, and app-like experience on mobile devices. Configure service worker to cache essential assets and enable offline browsing of previously viewed content.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/public/manifest.json",
+          "frontend/index.html",
+          "frontend/public/sw.js",
+          "frontend/src/hooks/useInstallPrompt.ts",
+          "frontend/src/hooks/useOfflineStatus.ts",
+          "frontend/src/components/InstallPromptBanner.tsx",
+          "frontend/src/components/OfflineIndicator.tsx",
+          "frontend/src/components/Header.tsx",
+          "frontend/src/App.tsx",
+          "frontend/src/components/MovieCatalog.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/public/manifest.json",
+          "frontend/index.html",
+          "frontend/src/hooks/useInstallPrompt.ts",
+          "frontend/src/hooks/useOfflineStatus.ts",
+          "frontend/src/components/InstallPromptBanner.tsx",
+          "frontend/src/components/OfflineIndicator.tsx",
+          "frontend/src/components/Header.tsx",
+          "frontend/src/App.tsx"
+        ]
+      },
+      {
+        "id": "REQ-4",
+        "summary": "Implement adaptive streaming that starts videos at lower quality (240p or 360p) and smoothly upgrades quality based on available bandwidth without buffering. Monitor network conditions in real-time and adjust quality preemptively to prevent interruptions.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/hooks/useAdaptiveStreaming.ts",
+          "frontend/src/components/AdaptiveVideoPlayer.tsx",
+          "frontend/src/components/MovieDialog.tsx",
+          "frontend/src/components/WatchPartyView.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/hooks/useAdaptiveStreaming.ts",
+          "frontend/src/components/MovieDialog.tsx"
+        ]
+      },
+      {
+        "id": "REQ-5",
+        "summary": "Add a mobile-optimized settings panel specifically for bandwidth and data management. Include controls for: default video quality, low-bandwidth mode toggle, autoplay preferences on cellular vs WiFi, data usage tracking, and connection speed test utility.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/hooks/useConnectionSpeedTest.ts",
+          "frontend/src/hooks/useBandwidthSettings.ts",
+          "frontend/src/components/BandwidthSettingsPanel.tsx",
+          "frontend/src/components/ConnectionSpeedTest.tsx",
+          "frontend/src/components/UserProfile.tsx",
+          "frontend/src/components/MovieDialog.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/hooks/useConnectionSpeedTest.ts",
+          "frontend/src/hooks/useBandwidthSettings.ts",
+          "frontend/src/components/BandwidthSettingsPanel.tsx",
+          "frontend/src/components/ConnectionSpeedTest.tsx",
+          "frontend/src/components/UserProfile.tsx",
+          "frontend/src/components/MovieDialog.tsx"
+        ]
+      }
+    ]
+  },
+  "changedFiles": [
+    "build-request.json",
+    "caffeine.lock.json",
+    "feature_evidence.json",
+    "frontend-file-summaries.txt",
+    "frontend-implementation-plan.json",
+    "frontend/index.html",
+    "frontend/public/manifest.json",
+    "frontend/src/App.tsx",
+    "frontend/src/components/BandwidthSettingsPanel.tsx",
+    "frontend/src/components/ConnectionSpeedTest.tsx",
+    "frontend/src/components/DataUsageEstimator.tsx",
+    "frontend/src/components/DataUsageIndicator.tsx",
+    "frontend/src/components/DataUsageSettings.tsx",
+    "frontend/src/components/Header.tsx",
+    "frontend/src/components/InstallPromptBanner.tsx",
+    "frontend/src/components/InstantPayoutsSection.tsx",
+    "frontend/src/components/LoginScreen.tsx",
+    "frontend/src/components/MovieDialog.tsx",
+    "frontend/src/components/OfflineIndicator.tsx",
+    "frontend/src/components/OwnershipTrackingSection.tsx",
+    "frontend/src/components/UserProfile.tsx",
+    "frontend/src/components/VideoQualitySelector.tsx",
+    "frontend/src/hooks/useAdaptiveStreaming.ts",
+    "frontend/src/hooks/useBandwidthMonitor.ts",
+    "frontend/src/hooks/useBandwidthSettings.ts",
+    "frontend/src/hooks/useConnectionSpeedTest.ts",
+    "frontend/src/hooks/useDataUsageTracker.ts",
+    "frontend/src/hooks/useInstallPrompt.ts",
+    "frontend/src/hooks/useLowBandwidthMode.ts",
+    "frontend/src/hooks/useOfflineStatus.ts",
+    "project_state.json",
+    "scratch/component-selection.json",
+    "spec.md",
+    "spec_vs_diff_report.json"
+  ]
+}

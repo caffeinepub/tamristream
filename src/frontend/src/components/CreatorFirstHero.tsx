@@ -106,7 +106,7 @@ export function CreatorFirstHero() {
               <Button
                 size="lg"
                 variant="outline"
-                onClick={() => navigate({ to: '/enhanced-creator-dashboard' })}
+                onClick={() => navigate({ to: '/enhanced-creator' })}
                 className="bg-white/10 backdrop-blur-sm border-2 border-white/30 text-white hover:bg-white hover:text-black font-bold text-lg px-8 py-6 h-auto rounded-full transition-all duration-300 hover:scale-105"
               >
                 View Dashboard

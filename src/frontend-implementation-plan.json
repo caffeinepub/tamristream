@@ -1,0 +1,235 @@
+{
+  "kind": "implementation_plan",
+  "version": "1.0",
+  "title": "Add mobile optimization for low-bandwidth African markets",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "summary": "Implement low-bandwidth mode toggle with automatic quality adjustment based on connection speed",
+      "acceptanceCriteria": [
+        "User can toggle low-bandwidth mode on/off in settings or video player controls",
+        "System automatically detects connection speed and adjusts video quality accordingly",
+        "Quality switches happen seamlessly without buffering or playback interruption",
+        "Current quality level is visibly indicated in the player UI",
+        "Mode preference persists across sessions in localStorage"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/useBandwidthMonitor.ts",
+          "operation": "create",
+          "description": "Create custom hook for real-time bandwidth detection using Network Information API and fallback performance monitoring. Detects connection speed and returns quality recommendations (240p, 360p, 480p, 720p, 1080p). Exports bandwidth state, quality recommendation, and connection type."
+        },
+        {
+          "path": "frontend/src/hooks/useLowBandwidthMode.ts",
+          "operation": "create",
+          "description": "Create hook to manage low-bandwidth mode state in localStorage. Provides toggle function, current mode state, and quality override capabilities. Persists user preference across sessions."
+        },
+        {
+          "path": "frontend/src/components/VideoQualitySelector.tsx",
+          "operation": "create",
+          "description": "Create quality selector component for video player with manual and auto modes. Shows current quality level with visual indicator, displays low-bandwidth mode toggle, and provides quality selection dropdown. Uses useLowBandwidthMode and useBandwidthMonitor hooks."
+        },
+        {
+          "path": "frontend/src/components/MovieDialog.tsx",
+          "operation": "modify",
+          "description": "Integrate VideoQualitySelector component into video player controls section. Wire up quality state to video element src attribute for quality switching. Add seamless quality transition logic that maintains playback position. Display current quality badge in player UI."
+        },
+        {
+          "path": "frontend/src/components/WatchPartyView.tsx",
+          "operation": "modify",
+          "description": "Integrate VideoQualitySelector into watch party video player. Ensure quality adjustments work during synchronized playback. Add quality level visibility for all participants."
+        }
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "summary": "Add data usage indicators showing MB consumed per video with real-time tracking and cumulative statistics",
+      "acceptanceCriteria": [
+        "Video preview shows estimated MB usage for different quality levels before playback",
+        "Real-time data counter displays during video playback showing current session usage",
+        "Settings page shows cumulative data usage statistics (daily, weekly, monthly)",
+        "Data estimates are accurate within 10% margin based on bitrate calculations",
+        "Users can reset data usage statistics manually"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/useDataUsageTracker.ts",
+          "operation": "create",
+          "description": "Create hook to track video data consumption using localStorage. Calculates bitrate-based estimates for each quality level, tracks real-time usage during playback, stores cumulative statistics (daily/weekly/monthly), and provides reset functionality. Returns current session usage, total usage stats, and estimate calculator function."
+        },
+        {
+          "path": "frontend/src/components/DataUsageIndicator.tsx",
+          "operation": "create",
+          "description": "Create component displaying real-time data consumption during video playback. Shows MB counter that updates every few seconds, includes quality-level breakdown, and displays warning indicators when usage is high. Uses useDataUsageTracker hook."
+        },
+        {
+          "path": "frontend/src/components/DataUsageEstimator.tsx",
+          "operation": "create",
+          "description": "Create component showing estimated data usage before video playback. Displays MB estimates for each available quality level (240p through 1080p), includes duration-based calculations, and provides quality recommendation based on available bandwidth. Appears in video preview/selection screens."
+        },
+        {
+          "path": "frontend/src/components/DataUsageSettings.tsx",
+          "operation": "create",
+          "description": "Create settings panel component displaying cumulative data usage statistics. Shows daily, weekly, and monthly consumption with visual charts, includes reset button for clearing statistics, and displays average per-session usage. Uses useDataUsageTracker hook for data."
+        },
+        {
+          "path": "frontend/src/components/MovieDialog.tsx",
+          "operation": "modify",
+          "description": "Add DataUsageEstimator component to movie preview section before playback starts. Integrate DataUsageIndicator into active video player overlay. Wire up data tracking to video element events (play, pause, timeupdate) for accurate measurement."
+        },
+        {
+          "path": "frontend/src/components/UserProfile.tsx",
+          "operation": "modify",
+          "description": "Add DataUsageSettings component as new section in user profile settings. Place it prominently in bandwidth/data management area. Ensure statistics display correctly with formatting (MB, GB) and time periods."
+        },
+        {
+          "path": "frontend/src/components/WatchPartyView.tsx",
+          "operation": "modify",
+          "description": "Integrate DataUsageIndicator into watch party video player overlay. Display real-time consumption alongside other player controls. Ensure tracking works correctly during synchronized playback."
+        }
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "summary": "Implement Progressive Web App features including offline access, home screen installation, and app-like mobile experience",
+      "acceptanceCriteria": [
+        "Users can install the app to their home screen with a native install prompt",
+        "App icon and splash screen display correctly when launched from home screen",
+        "Previously viewed content is accessible offline with cached metadata and thumbnails",
+        "Service worker caches critical UI assets for offline navigation",
+        "App maintains app-like navigation without browser chrome when installed",
+        "Offline indicator displays current connection status and cached content availability"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/public/manifest.json",
+          "operation": "create",
+          "description": "Create PWA manifest with app name (TamriStream), theme colors matching brand identity, display mode standalone for app-like experience, icons array referencing generated/app-logo.png and generated/app-logo.dim_512x512.png at multiple sizes (192x192, 512x512), start_url pointing to root, background_color, and orientation set to any for mobile flexibility."
+        },
+        {
+          "path": "frontend/index.html",
+          "operation": "modify",
+          "description": "Add manifest link tag in head section. Add apple-touch-icon meta tags referencing app logo. Add theme-color meta tag for mobile browser chrome. Ensure existing PWA-related tags are preserved and enhanced."
+        },
+        {
+          "path": "frontend/public/sw.js",
+          "operation": "modify",
+          "description": "Extend existing service worker to cache movie thumbnails, metadata JSON responses, and frequently accessed images. Add offline fallback page caching. Implement cache-first strategy for static assets and network-first with cache fallback for API calls. Maintain compatibility with existing versioned caching system. Add logic to cache viewed content metadata for offline browsing."
+        },
+        {
+          "path": "frontend/src/hooks/useInstallPrompt.ts",
+          "operation": "create",
+          "description": "Create hook managing PWA install prompt using beforeinstallprompt event. Captures prompt event, provides install function, tracks installation state in localStorage, and returns isInstallable boolean and promptInstall function. Includes iOS detection for alternative install instructions."
+        },
+        {
+          "path": "frontend/src/hooks/useOfflineStatus.ts",
+          "operation": "create",
+          "description": "Create hook monitoring online/offline status using navigator.onLine and online/offline events. Returns connection status, cached content availability from service worker, and sync status. Provides visibility into what content is available offline."
+        },
+        {
+          "path": "frontend/src/components/InstallPromptBanner.tsx",
+          "operation": "create",
+          "description": "Create banner component promoting PWA installation. Uses useInstallPrompt hook to show native prompt or iOS instructions. Displays prominently on mobile devices when installable. Includes dismiss functionality with localStorage persistence. Shows app benefits (offline access, home screen, faster loading)."
+        },
+        {
+          "path": "frontend/src/components/OfflineIndicator.tsx",
+          "operation": "create",
+          "description": "Create component displaying current connection status and offline capabilities. Uses useOfflineStatus hook. Shows online/offline badge, lists cached content available offline, and displays sync status when connection restored. Appears in header or as floating indicator on mobile."
+        },
+        {
+          "path": "frontend/src/components/Header.tsx",
+          "operation": "modify",
+          "description": "Integrate OfflineIndicator component into mobile header layout. Add InstallPromptBanner display logic for non-installed mobile users. Ensure indicators are visible but non-intrusive on mobile screens."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Add InstallPromptBanner at top-level for mobile users. Ensure PWA features initialize on app mount. Add offline mode detection that adjusts UI behavior when offline (disable uploads, show cached content only)."
+        },
+        {
+          "path": "frontend/src/components/MovieCatalog.tsx",
+          "operation": "modify",
+          "description": "Add offline filtering to show only cached movies when offline. Display offline badge on cached movie cards. Show helpful message when offline with no cached content. Use useOfflineStatus hook to determine availability."
+        }
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "summary": "Implement adaptive streaming starting at lower quality and upgrading smoothly based on bandwidth",
+      "acceptanceCriteria": [
+        "Videos automatically start at 240p or 360p quality on initial load",
+        "System monitors bandwidth continuously during playback",
+        "Quality upgrades happen smoothly without visible buffering or pauses",
+        "Quality downgrades occur preemptively when bandwidth drops to prevent buffering",
+        "User can manually override auto-quality selection if desired",
+        "Smooth transitions between quality levels maintain playback position exactly"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/useAdaptiveStreaming.ts",
+          "operation": "create",
+          "description": "Create hook implementing adaptive streaming logic. Uses useBandwidthMonitor for real-time connection monitoring. Manages quality selection state with auto/manual modes. Implements smooth quality switching algorithm that maintains playback position. Monitors video buffer health and adjusts preemptively. Returns current quality, auto-mode state, quality change function, and buffer status. Starts playback at 240p or 360p by default."
+        },
+        {
+          "path": "frontend/src/components/AdaptiveVideoPlayer.tsx",
+          "operation": "create",
+          "description": "Create video player component with adaptive streaming capabilities. Uses useAdaptiveStreaming hook for quality management. Handles video element ref and quality source switching. Implements seamless transition logic that preserves exact playback position during quality changes. Displays buffer status and quality transition indicators. Supports manual quality override while maintaining auto-adjust capability."
+        },
+        {
+          "path": "frontend/src/components/MovieDialog.tsx",
+          "operation": "modify",
+          "description": "Replace standard video element with AdaptiveVideoPlayer component. Wire up quality controls to adaptive streaming hook. Display auto-quality indicator when active. Show smooth quality transitions without buffering interruptions. Maintain all existing player features (play/pause, seeking, volume)."
+        },
+        {
+          "path": "frontend/src/components/WatchPartyView.tsx",
+          "operation": "modify",
+          "description": "Integrate AdaptiveVideoPlayer into watch party interface. Ensure quality adaptation works with synchronized playback. Display quality levels for host and participants. Handle quality changes without disrupting party sync."
+        }
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "summary": "Add mobile-optimized settings panel for bandwidth and data management with connection speed test",
+      "acceptanceCriteria": [
+        "New 'Data & Bandwidth' section appears in user settings",
+        "Users can set default video quality for cellular vs WiFi separately",
+        "Built-in connection speed test shows current download/upload speeds",
+        "Autoplay can be disabled specifically for cellular connections",
+        "All preferences are saved to localStorage and persist across sessions",
+        "Settings panel is touch-optimized with large tap targets for mobile"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/useConnectionSpeedTest.ts",
+          "operation": "create",
+          "description": "Create hook implementing connection speed test. Downloads test files of known sizes, measures transfer time, calculates download/upload speeds in Mbps. Returns test function, isRunning state, and results with speed measurements. Uses timeout handling for slow connections."
+        },
+        {
+          "path": "frontend/src/hooks/useBandwidthSettings.ts",
+          "operation": "create",
+          "description": "Create hook managing bandwidth-related user preferences in localStorage. Stores default quality for WiFi vs cellular, autoplay preferences per connection type, low-bandwidth mode default, and data saver preferences. Provides getters and setters for each preference with persistence. Returns all settings and update functions."
+        },
+        {
+          "path": "frontend/src/components/BandwidthSettingsPanel.tsx",
+          "operation": "create",
+          "description": "Create comprehensive bandwidth settings component with sections for default quality selection (separate WiFi/cellular dropdowns), autoplay preferences with connection-type toggles, low-bandwidth mode default toggle, and connection speed test button with results display. Uses useBandwidthSettings and useConnectionSpeedTest hooks. Mobile-optimized with large touch targets (min 44x44px), clear labels, and spacing. Includes helpful descriptions for each setting."
+        },
+        {
+          "path": "frontend/src/components/ConnectionSpeedTest.tsx",
+          "operation": "create",
+          "description": "Create connection speed test component displaying test controls and results. Shows start test button, running animation during test, and results with download/upload speeds in Mbps. Includes interpretation guidance (slow/medium/fast) and recommended quality settings. Uses useConnectionSpeedTest hook. Mobile-friendly layout with large buttons."
+        },
+        {
+          "path": "frontend/src/components/UserProfile.tsx",
+          "operation": "modify",
+          "description": "Add new 'Data & Bandwidth' tab or section to user profile settings. Integrate BandwidthSettingsPanel component prominently. Ensure section is easily discoverable and touch-friendly on mobile. Place near existing data saver mode toggle for logical grouping."
+        },
+        {
+          "path": "frontend/src/components/MovieDialog.tsx",
+          "operation": "modify",
+          "description": "Apply bandwidth settings for autoplay behavior based on connection type. Use useBandwidthSettings to check if autoplay should be disabled on cellular. Apply default quality preference when video loads. Show settings reminder hint if user frequently adjusts quality manually."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,125 @@
+{
+  "kind": "build_request",
+  "title": "Add mobile optimization for low-bandwidth African markets",
+  "projectName": "TamriStream",
+  "priority": "high",
+  "requirements": [
+    {
+      "id": "REQ-1",
+      "text": "Implement low-bandwidth mode toggle in the video player that automatically adjusts streaming quality based on the user's connection speed. The system should detect connection speed and switch between quality levels (240p, 360p, 480p, 720p, 1080p) dynamically without user intervention when low-bandwidth mode is enabled.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-19"
+        ],
+        "quotes": [
+          "Low-bandwidth mode (automatic quality adjustment based on connection)"
+        ]
+      },
+      "acceptanceCriteria": [
+        "User can toggle low-bandwidth mode on/off in settings or video player controls",
+        "System automatically detects connection speed and adjusts video quality accordingly",
+        "Quality switches happen seamlessly without buffering or playback interruption",
+        "Current quality level is visibly indicated in the player UI",
+        "Mode preference persists across sessions in localStorage"
+      ]
+    },
+    {
+      "id": "REQ-2",
+      "text": "Add data usage indicators throughout the platform that show MB consumed per video during playback. Display estimated data usage before video starts based on selected quality, and real-time data consumption during playback. Include cumulative daily/weekly data usage stats in user settings.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-19"
+        ],
+        "quotes": [
+          "Data usage indicators (show MB consumed per video)"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Video preview shows estimated MB usage for different quality levels before playback",
+        "Real-time data counter displays during video playback showing current session usage",
+        "Settings page shows cumulative data usage statistics (daily, weekly, monthly)",
+        "Data estimates are accurate within 10% margin based on bitrate calculations",
+        "Users can reset data usage statistics manually"
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "text": "Implement Progressive Web App (PWA) features including offline access for downloaded content, home screen installation prompt, and app-like experience on mobile devices. Configure service worker to cache essential assets and enable offline browsing of previously viewed content.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-19"
+        ],
+        "quotes": [
+          "Progressive Web App (PWA) features (offline access, home screen install)"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Users can install the app to their home screen with a native install prompt",
+        "App icon and splash screen display correctly when launched from home screen",
+        "Previously viewed content is accessible offline with cached metadata and thumbnails",
+        "Service worker caches critical UI assets for offline navigation",
+        "App maintains app-like navigation without browser chrome when installed",
+        "Offline indicator displays current connection status and cached content availability"
+      ]
+    },
+    {
+      "id": "REQ-4",
+      "text": "Implement adaptive streaming that starts videos at lower quality (240p or 360p) and smoothly upgrades quality based on available bandwidth without buffering. Monitor network conditions in real-time and adjust quality preemptively to prevent interruptions.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-19"
+        ],
+        "quotes": [
+          "Adaptive streaming (start at lower quality, upgrade smoothly)"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Videos automatically start at 240p or 360p quality on initial load",
+        "System monitors bandwidth continuously during playback",
+        "Quality upgrades happen smoothly without visible buffering or pauses",
+        "Quality downgrades occur preemptively when bandwidth drops to prevent buffering",
+        "User can manually override auto-quality selection if desired",
+        "Smooth transitions between quality levels maintain playback position exactly"
+      ]
+    },
+    {
+      "id": "REQ-5",
+      "text": "Add a mobile-optimized settings panel specifically for bandwidth and data management. Include controls for: default video quality, low-bandwidth mode toggle, autoplay preferences on cellular vs WiFi, data usage tracking, and connection speed test utility.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-19"
+        ]
+      },
+      "acceptanceCriteria": [
+        "New 'Data & Bandwidth' section appears in user settings",
+        "Users can set default video quality for cellular vs WiFi separately",
+        "Built-in connection speed test shows current download/upload speeds",
+        "Autoplay can be disabled specifically for cellular connections",
+        "All preferences are saved to localStorage and persist across sessions",
+        "Settings panel is touch-optimized with large tap targets for mobile"
+      ]
+    }
+  ],
+  "constraints": [
+    "Must maintain compatibility with existing service worker implementation in frontend/public/sw.js",
+    "PWA features must work within Internet Computer deployment constraints",
+    "Cannot use external bandwidth monitoring services; must implement client-side detection",
+    "Must preserve existing video playback functionality and MovieDialog component structure"
+  ],
+  "nonGoals": [
+    "Backend video transcoding or quality generation (assume multiple qualities already exist)",
+    "Native mobile app development (React Native, Flutter)",
+    "Offline video downloads requiring backend storage modifications",
+    "Real-time streaming protocol changes (WebRTC, HLS modifications)",
+    "Third-party CDN integration for adaptive bitrate"
+  ],
+  "imageRequirements": {
+    "required": [],
+    "edits": []
+  }
+}

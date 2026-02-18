@@ -1,3 +1,4 @@
+// Clean rebuild of TamriStream actor to ensure reliable loading and cache clearing
 import Text "mo:base/Text";
 import Iter "mo:base/Iter";
 import List "mo:base/List";
@@ -1361,8 +1362,8 @@ actor TamriStream {
   };
 
   public shared ({ caller }) func updateRoyaltyEarnings(contentId : Text, amount : Nat) : async () {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
-      Debug.trap("Unauthorized: Only admins can update earnings");
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Debug.trap("Unauthorized: Only users can update earnings");
     };
 
     switch (textMap.get(smartRoyalties, contentId)) {
@@ -1370,6 +1371,10 @@ actor TamriStream {
         Debug.trap("Smart royalty not found");
       };
       case (?smartRoyalty) {
+        if (smartRoyalty.creator != caller and not AccessControl.isAdmin(accessControlState, caller)) {
+          Debug.trap("Unauthorized: Only the content owner or admin can update earnings");
+        };
+
         let updatedRoyalty : SmartRoyalty = {
           smartRoyalty with
           totalEarnings = smartRoyalty.totalEarnings + amount;
@@ -2016,7 +2021,10 @@ actor TamriStream {
     };
   };
 
-  public func getStripeSessionStatus(sessionId : Text) : async Stripe.StripeSessionStatus {
+  public shared ({ caller }) func getStripeSessionStatus(sessionId : Text) : async Stripe.StripeSessionStatus {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Debug.trap("Unauthorized: Only users can check session status");
+    };
     await Stripe.getSessionStatus(getStripeConfiguration(), sessionId, transform);
   };
 

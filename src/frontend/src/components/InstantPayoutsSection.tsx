@@ -232,7 +232,7 @@ export function InstantPayoutsSection() {
         <div className="text-center mt-12">
           <Button
             size="lg"
-            onClick={() => navigate({ to: '/creator-dashboard' })}
+            onClick={() => navigate({ to: '/enhanced-creator' })}
             className="bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white font-semibold px-8"
           >
             <DollarSign className="w-5 h-5 mr-2" />

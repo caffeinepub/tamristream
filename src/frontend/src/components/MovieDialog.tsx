@@ -12,8 +12,13 @@ import { useInternetIdentity } from '../hooks/useInternetIdentity';
 import { useGetFavoriteMovies, useAddFavoriteMovie, useRemoveFavoriteMovie, useRateMovie, useGetMovieRatings, useIsAdmin, useUploadMovieContent, useCreateWatchParty, useGetExtrasByMovie, type ExtrasContent } from '../hooks/useQueries';
 import { useFileUrl } from '../blob-storage/FileStorage';
 import { toast } from 'sonner';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import type { Movie } from '../backend';
+import { VideoQualitySelector } from './VideoQualitySelector';
+import { DataUsageIndicator } from './DataUsageIndicator';
+import { DataUsageEstimator } from './DataUsageEstimator';
+import { useAdaptiveStreaming } from '../hooks/useAdaptiveStreaming';
+import { useDataUsageTracker } from '../hooks/useDataUsageTracker';
 
 interface MovieDialogProps {
   movie: Movie | null;
@@ -31,6 +36,9 @@ export function MovieDialog({ movie, open, onOpenChange, onWatchPartyCreate }: M
   const [uploadingTrailer, setUploadingTrailer] = useState(false);
   const [selectedExtras, setSelectedExtras] = useState<ExtrasContent | null>(null);
   const [showExtrasDialog, setShowExtrasDialog] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [playbackTime, setPlaybackTime] = useState(0);
+  const videoRef = useRef<HTMLVideoElement>(null);
   
   const { data: favoriteMovies = [] } = useGetFavoriteMovies();
   const { data: movieRatings = [] } = useGetMovieRatings(movie?.title || '');
@@ -44,9 +52,41 @@ export function MovieDialog({ movie, open, onOpenChange, onWatchPartyCreate }: M
   const uploadContent = useUploadMovieContent();
   const createWatchParty = useCreateWatchParty();
   
+  const { currentQuality, autoMode, setQuality, toggleAutoMode } = useAdaptiveStreaming();
+  const { resetCurrentSession } = useDataUsageTracker();
+  
   const isFavorite = movie ? favoriteMovies.includes(movie.title) : false;
   const averageRating = movie ? Number(movie.averageRating) : 0;
   const reviewCount = movie ? Number(movie.reviewCount) : 0;
+
+  // Reset data tracking when dialog closes
+  useEffect(() => {
+    if (!open) {
+      resetCurrentSession();
+      setIsPlaying(false);
+      setPlaybackTime(0);
+    }
+  }, [open, resetCurrentSession]);
+
+  // Track video playback
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const handlePlay = () => setIsPlaying(true);
+    const handlePause = () => setIsPlaying(false);
+    const handleTimeUpdate = () => setPlaybackTime(video.currentTime);
+
+    video.addEventListener('play', handlePlay);
+    video.addEventListener('pause', handlePause);
+    video.addEventListener('timeupdate', handleTimeUpdate);
+
+    return () => {
+      video.removeEventListener('play', handlePlay);
+      video.removeEventListener('pause', handlePause);
+      video.removeEventListener('timeupdate', handleTimeUpdate);
+    };
+  }, []);
 
   const handleToggleFavorite = async () => {
     if (!movie) return;
@@ -159,11 +199,30 @@ export function MovieDialog({ movie, open, onOpenChange, onWatchPartyCreate }: M
                 />
               </div>
               
+              {/* Data Usage Estimator */}
+              <DataUsageEstimator durationMinutes={120} />
+              
               {movie.trailerPath && trailerUrl && (
                 <div className="space-y-2">
-                  <h4 className="font-semibold text-foreground">Trailer</h4>
-                  <div className="aspect-video rounded-lg overflow-hidden bg-black">
+                  <div className="flex items-center justify-between">
+                    <h4 className="font-semibold text-foreground">Trailer</h4>
+                    <div className="flex items-center gap-2">
+                      <DataUsageIndicator
+                        quality={currentQuality}
+                        isPlaying={isPlaying}
+                        playbackTime={playbackTime}
+                      />
+                      <VideoQualitySelector
+                        currentQuality={currentQuality}
+                        autoMode={autoMode}
+                        onQualityChange={(quality) => setQuality(quality, false)}
+                        onAutoModeToggle={toggleAutoMode}
+                      />
+                    </div>
+                  </div>
+                  <div className="aspect-video rounded-lg overflow-hidden bg-black relative">
                     <video
+                      ref={videoRef}
                       controls
                       className="w-full h-full"
                       poster={`/assets/generated/${movie.coverImagePath}`}
@@ -432,42 +491,22 @@ interface ExtrasCardProps {
 }
 
 function ExtrasCard({ extras, onPlay }: ExtrasCardProps) {
-  const { data: thumbnailUrl } = useFileUrl(extras.thumbnailPath);
-
-  const getContentTypeIcon = (type: string) => {
-    switch (type.toLowerCase()) {
-      case 'behind-the-scenes':
-        return <Film className="w-4 h-4" />;
-      case 'interview':
-        return <User className="w-4 h-4" />;
-      case 'documentary':
-        return <FileText className="w-4 h-4" />;
-      default:
-        return <Play className="w-4 h-4" />;
-    }
-  };
-
   return (
-    <div className="flex items-center space-x-4 p-3 border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer" onClick={onPlay}>
-      <div className="relative w-20 h-12 rounded overflow-hidden bg-muted">
+    <div className="flex gap-4 p-3 border rounded-lg hover:bg-accent/50 transition-colors cursor-pointer" onClick={onPlay}>
+      <div className="relative w-32 h-20 shrink-0 rounded overflow-hidden bg-muted">
         <img
-          src={thumbnailUrl || `/assets/generated/${extras.thumbnailPath}`}
+          src={`/assets/generated/${extras.thumbnailPath}`}
           alt={extras.title}
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-          <Play className="w-4 h-4 text-white fill-white" />
+        <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+          <Play className="w-8 h-8 text-white" />
         </div>
       </div>
-      <div className="flex-1">
-        <div className="flex items-center space-x-2 mb-1">
-          {getContentTypeIcon(extras.contentType)}
-          <Badge variant="outline" className="text-xs">
-            {extras.contentType}
-          </Badge>
-        </div>
-        <h5 className="font-medium text-foreground text-sm">{extras.title}</h5>
-        <p className="text-xs text-muted-foreground line-clamp-2">{extras.description}</p>
+      <div className="flex-1 min-w-0">
+        <h5 className="font-medium text-sm truncate">{extras.title}</h5>
+        <p className="text-xs text-muted-foreground line-clamp-2 mt-1">{extras.description}</p>
+        <Badge variant="outline" className="mt-2 text-xs">{extras.contentType}</Badge>
       </div>
     </div>
   );
@@ -488,33 +527,22 @@ function ExtrasPlayerDialog({ extras, open, onOpenChange }: ExtrasPlayerDialogPr
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl">
         <DialogHeader>
-          <DialogTitle className="flex items-center space-x-2">
-            <Film className="w-5 h-5 text-primary" />
-            <span>{extras.title}</span>
-          </DialogTitle>
+          <DialogTitle>{extras.title}</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
-          <div className="aspect-video rounded-lg overflow-hidden bg-black">
-            <video
-              controls
-              autoPlay
-              className="w-full h-full"
-              poster={`/assets/generated/${extras.thumbnailPath}`}
-            >
-              <source src={videoUrl || `/assets/generated/${extras.videoPath}`} type="video/mp4" />
-              Your browser does not support the video tag.
-            </video>
-          </div>
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-lg font-semibold text-foreground">{extras.title}</h3>
-                <p className="text-sm text-muted-foreground">Related to: {extras.associatedMovie}</p>
-              </div>
-              <Badge variant="outline">{extras.contentType}</Badge>
+          {videoUrl && (
+            <div className="aspect-video rounded-lg overflow-hidden bg-black">
+              <video
+                controls
+                autoPlay
+                className="w-full h-full"
+              >
+                <source src={videoUrl} type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
             </div>
-            <p className="text-sm text-muted-foreground">{extras.description}</p>
-          </div>
+          )}
+          <p className="text-sm text-muted-foreground">{extras.description}</p>
         </div>
       </DialogContent>
     </Dialog>
