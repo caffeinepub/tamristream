@@ -55,10 +55,11 @@
   }
   
   html {
-    /* Prevent horizontal scroll */
+    /* Allow vertical scrolling */
+    overflow-y: auto;
     overflow-x: hidden;
     /* Fix for iOS Safari bottom bar */
-    height: -webkit-fill-available;
+    height: 100%;
     /* Smooth scrolling */
     scroll-behavior: smooth;
     /* Prevent text size adjustment on mobile */
@@ -66,6 +67,8 @@
     -moz-text-size-adjust: 100%;
     -ms-text-size-adjust: 100%;
     text-size-adjust: 100%;
+    /* Enable momentum scrolling on iOS */
+    -webkit-overflow-scrolling: touch;
   }
   
   body {
@@ -75,24 +78,35 @@
       sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    /* Prevent horizontal scroll on mobile */
+    /* Allow vertical scrolling, prevent horizontal */
+    overflow-y: auto;
     overflow-x: hidden;
-    /* Improve touch scrolling */
+    /* Enable momentum scrolling on iOS */
     -webkit-overflow-scrolling: touch;
-    /* Prevent pull-to-refresh on mobile */
-    overscroll-behavior-y: contain;
+    /* Prevent pull-to-refresh on mobile but allow scroll */
+    overscroll-behavior-x: none;
+    overscroll-behavior-y: auto;
     /* Ensure proper height on mobile */
     min-height: 100vh;
-    min-height: -webkit-fill-available;
+    min-height: 100dvh;
+    /* Allow touch scrolling */
+    touch-action: pan-y pinch-zoom;
+    /* Ensure body can scroll */
+    position: relative;
   }
 
-  /* Ensure root container fills viewport on mobile */
+  /* Ensure root container allows scrolling */
   #root {
     min-height: 100vh;
-    min-height: -webkit-fill-available;
-    /* Prevent horizontal overflow */
+    min-height: 100dvh;
+    /* Allow vertical scrolling */
+    overflow-y: auto;
     overflow-x: hidden;
     width: 100%;
+    /* Enable momentum scrolling */
+    -webkit-overflow-scrolling: touch;
+    /* Allow touch scrolling */
+    touch-action: pan-y pinch-zoom;
   }
 }
 
@@ -171,7 +185,7 @@
     min-width: 44px;
     display: inline-flex;
     align-items: center;
-    justify-center: center;
+    justify-content: center;
     /* Improve touch response */
     touch-action: manipulation;
     /* Prevent text selection */
@@ -217,6 +231,15 @@
     -moz-text-size-adjust: 100%;
     -ms-text-size-adjust: 100%;
     text-size-adjust: 100%;
+  }
+
+  /* Scrollable container utility */
+  .scrollable {
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    touch-action: pan-y pinch-zoom;
   }
 }
 
@@ -298,8 +321,10 @@ img[loading="lazy"] {
 .overflow-scroll,
 .overflow-auto {
   -webkit-overflow-scrolling: touch;
-  /* Prevent overscroll bounce */
+  /* Allow scroll behavior */
   overscroll-behavior: contain;
+  /* Enable touch scrolling */
+  touch-action: pan-y pinch-zoom;
 }
 
 /* Performance: Reduce paint on scroll */
@@ -469,16 +494,17 @@ img[loading="lazy"] {
     min-width: 44px;
   }
   
-  /* Prevent horizontal scroll */
+  /* Allow vertical scrolling */
   body, html, #root {
     max-width: 100vw;
     overflow-x: hidden;
+    overflow-y: auto;
   }
   
   /* Fix for iOS Safari address bar */
   .min-h-screen {
     min-height: 100vh;
-    min-height: -webkit-fill-available;
+    min-height: 100dvh;
   }
 }
 
@@ -486,12 +512,13 @@ img[loading="lazy"] {
 @supports (-webkit-touch-callout: none) {
   /* Fix for iOS Safari bottom bar */
   body {
-    min-height: -webkit-fill-available;
+    min-height: 100dvh;
   }
   
-  /* Prevent rubber band scrolling */
+  /* Allow vertical scrolling but prevent horizontal bounce */
   body {
-    overscroll-behavior-y: none;
+    overscroll-behavior-x: none;
+    overscroll-behavior-y: auto;
   }
   
   /* Fix input zoom on iOS */
@@ -529,7 +556,7 @@ video {
   transform: translateZ(0);
 }
 
-/* Fix for dialog/modal on mobile */
+/* Fix for dialog/modal on mobile - CRITICAL FOR SCROLLING */
 @media (max-width: 768px) {
   [role="dialog"],
   [role="alertdialog"] {
@@ -537,5 +564,22 @@ video {
     max-height: 90dvh;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+    touch-action: pan-y pinch-zoom;
+    overscroll-behavior: contain;
   }
+}
+
+/* Ensure main content areas are scrollable */
+main {
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y pinch-zoom;
+}
+
+/* Fix for fixed headers not blocking scroll */
+header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
 }

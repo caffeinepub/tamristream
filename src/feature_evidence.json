@@ -2,37 +2,13 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-investigate-and-fix-critical-javascript-errors-preventing-the-entire-application-from-loading-or-functioning-on-mobile-devices-by-examining-browser-console-logs-service-worker-registration-and-main-bundle-loading",
-      "featureTitle": "Investigate and fix critical JavaScript errors preventing the entire application from loading or functioning on mobile devices by examining browser console logs, service worker registration, and main bundle loading",
+      "featureId": "feature-diagnose-and-fix-scrolling-issues-on-mobile-devices-by-examining-css-overflow-properties-touch-action-directives-viewport-height-calculations-and-scroll-event-handlers-across-all-scrollable-containers-including-main-content-areas-dialogs-and-sidebar-navigation",
+      "featureTitle": "Diagnose and fix scrolling issues on mobile devices by examining CSS overflow properties, touch-action directives, viewport height calculations, and scroll event handlers across all scrollable containers including main content areas, dialogs, and sidebar navigation",
       "files": [
-        "frontend/index.html",
-        "frontend/public/sw.js",
-        "frontend/src/components/ErrorBoundary.tsx",
-        "frontend/src/sw/registerServiceWorker.ts"
-      ],
-      "components": [
-        "authorization@1.0.1",
-        "blob-storage@1.1.2",
-        "stripe@1.0.1",
-        "user-approval@1.0.0",
-        "camera@1.0.0",
-        "http-outcalls@1.1.1",
-        "invite-links@1.0.1",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-7"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-verify-and-fix-touch-event-handlers-across-all-interactive-elements-including-buttons-cards-navigation-links-video-controls-and-dialog-overlays-to-ensure-they-respond-properly-to-mobile-touch-inputs",
-      "featureTitle": "Verify and fix touch event handlers across all interactive elements including buttons, cards, navigation links, video controls, and dialog overlays to ensure they respond properly to mobile touch inputs",
-      "files": [
+        "frontend/src/components/Header.tsx",
+        "frontend/src/components/MovieCatalog.tsx",
+        "frontend/src/components/MovieDialog.tsx",
+        "frontend/src/components/UserProfile.tsx",
         "frontend/src/index.css"
       ],
       "components": [
@@ -50,16 +26,18 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-9"
+        "REQ-13"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-fix-mobile-viewport-rendering-issues-including-proper-scaling-scroll-behavior-and-layout-overflow-that-may-be-preventing-content-from-displaying-correctly-on-mobile-screens",
-      "featureTitle": "Fix mobile viewport rendering issues including proper scaling, scroll behavior, and layout overflow that may be preventing content from displaying correctly on mobile screens",
+      "featureId": "feature-perform-comprehensive-mobile-compatibility-verification-testing-across-all-major-features-to-ensure-the-application-functions-correctly-on-mobile-devices-including-navigation-authentication-video-playback-form-submission-and-interactive-elements",
+      "featureTitle": "Perform comprehensive mobile compatibility verification testing across all major features to ensure the application functions correctly on mobile devices, including navigation, authentication, video playback, form submission, and interactive elements",
       "files": [
-        "frontend/index.html",
-        "frontend/src/index.css"
+        "frontend/src/components/Header.tsx",
+        "frontend/src/components/MovieCatalog.tsx",
+        "frontend/src/components/MovieDialog.tsx",
+        "frontend/src/components/UserProfile.tsx"
       ],
       "components": [
         "authorization@1.0.1",
@@ -76,33 +54,7 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-10"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-test-and-fix-service-worker-caching-strategy-on-mobile-browsers-to-ensure-proper-asset-loading-offline-functionality-and-cache-updates-without-blocking-app-initialization",
-      "featureTitle": "Test and fix service worker caching strategy on mobile browsers to ensure proper asset loading, offline functionality, and cache updates without blocking app initialization",
-      "files": [
-        "frontend/public/sw.js",
-        "frontend/src/sw/registerServiceWorker.ts"
-      ],
-      "components": [
-        "authorization@1.0.1",
-        "blob-storage@1.1.2",
-        "stripe@1.0.1",
-        "user-approval@1.0.0",
-        "camera@1.0.0",
-        "http-outcalls@1.1.1",
-        "invite-links@1.0.1",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-11"
+        "REQ-14"
       ],
       "confidence": "high"
     }

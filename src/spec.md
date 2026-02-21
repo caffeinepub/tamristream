@@ -1,14 +1,16 @@
 # Specification
 
 ## Summary
-**Goal:** Diagnose and fix complete mobile functionality failure preventing the application from working on mobile devices.
+**Goal:** Fix scrolling functionality on mobile devices and verify comprehensive mobile compatibility across all application features.
 
 **Planned changes:**
-- Investigate and fix critical JavaScript errors preventing app loading on mobile browsers
-- Fix Internet Identity authentication flow for mobile devices (redirect URL handling and login completion)
-- Verify and fix touch event handlers for all interactive elements (buttons, cards, navigation, video controls, dialogs)
-- Fix mobile viewport rendering issues (scaling, scroll behavior, layout overflow)
-- Test and fix service worker caching strategy on mobile browsers
-- Add comprehensive mobile device debugging capability (error logging, network monitoring, device info display)
+- Diagnose and fix CSS overflow properties, touch-action directives, and viewport height calculations that prevent scrolling on mobile devices
+- Ensure scrolling works correctly in all content areas including movie catalog, dialogs, profile pages, and navigation menus
+- Test and verify touch input responsiveness for navigation, buttons, and interactive elements
+- Validate Internet Identity authentication flow on mobile browsers
+- Confirm video playback controls work with touch input
+- Verify forms can be filled out and submitted on mobile devices
+- Ensure dialogs and modals function correctly on mobile
+- Check service worker compatibility to prevent app initialization blocking
 
-**User-visible outcome:** The application loads and functions completely on mobile devices. Users can authenticate via Internet Identity, navigate the app, interact with all buttons and controls using touch, and view content properly on mobile screens.
+**User-visible outcome:** Users can smoothly scroll through content on mobile devices using touch gestures, and all application features (navigation, authentication, video playback, forms, dialogs) work correctly on both iOS Safari and Android Chrome.

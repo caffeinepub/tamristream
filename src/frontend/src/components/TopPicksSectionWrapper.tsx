@@ -16,10 +16,6 @@ export default function TopPicksSectionWrapper() {
     setShowMovieDialog(true);
   };
 
-  const handleWatchPartyCreate = (partyId: string) => {
-    navigate({ to: `/watch-party/${partyId}` });
-  };
-
   return (
     <div className="container mx-auto px-4 py-8">
       <TopPicksSection
@@ -31,7 +27,6 @@ export default function TopPicksSectionWrapper() {
         movie={selectedMovie}
         open={showMovieDialog}
         onOpenChange={setShowMovieDialog}
-        onWatchPartyCreate={handleWatchPartyCreate}
       />
     </div>
   );

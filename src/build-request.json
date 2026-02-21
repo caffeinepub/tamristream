@@ -1,121 +1,61 @@
 {
   "kind": "build_request",
-  "title": "Diagnose and fix complete mobile functionality failure in Version 202",
-  "projectName": "TamriStream",
+  "title": "Fix scrolling functionality on mobile devices and verify overall mobile compatibility",
   "priority": "high",
   "requirements": [
     {
-      "id": "REQ-7",
-      "text": "Investigate and fix critical JavaScript errors preventing the entire application from loading or functioning on mobile devices by examining browser console logs, service worker registration, and main bundle loading",
+      "id": "REQ-13",
+      "text": "Diagnose and fix scrolling issues on mobile devices by examining CSS overflow properties, touch-action directives, viewport height calculations, and scroll event handlers across all scrollable containers including main content areas, dialogs, and sidebar navigation",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-user-nothingid-working"
+          "msg-user-latest"
         ],
         "quotes": [
-          "nothingid working"
+          "scroling is not working"
         ]
       },
       "acceptanceCriteria": [
-        "Application loads successfully on mobile browsers (iOS Safari, Chrome Android)",
-        "No critical JavaScript errors in mobile browser console",
-        "Main React application renders and mounts correctly",
-        "Service worker registers without errors"
+        "Users can scroll vertically through content on mobile devices using touch gestures",
+        "Scrolling works in all major content areas: movie catalog, dialogs, profile pages, and navigation menus",
+        "No CSS properties block touch-based scrolling (overflow: hidden, touch-action: none, or similar)",
+        "Scroll behavior is smooth and responsive without lag or stuck scroll positions",
+        "Both iOS Safari and Android Chrome support scrolling correctly"
       ]
     },
     {
-      "id": "REQ-8",
-      "text": "Fix Internet Identity authentication flow for mobile browsers, ensuring the redirect URL handling works correctly and users can complete login on mobile devices",
-      "target": "frontend",
+      "id": "REQ-14",
+      "text": "Perform comprehensive mobile compatibility verification testing across all major features to ensure the application functions correctly on mobile devices, including navigation, authentication, video playback, form submission, and interactive elements",
+      "target": "both",
       "source": {
         "messageIds": [
-          "msg-user-nothingid-working"
+          "msg-user-latest"
+        ],
+        "quotes": [
+          "can u recheck it again if things are working fineL"
         ]
       },
       "acceptanceCriteria": [
-        "Login button responds to touch on mobile",
-        "Internet Identity redirect completes successfully",
-        "User is authenticated and redirected back to app after login",
-        "Authentication state persists correctly on mobile"
-      ]
-    },
-    {
-      "id": "REQ-9",
-      "text": "Verify and fix touch event handlers across all interactive elements including buttons, cards, navigation links, video controls, and dialog overlays to ensure they respond properly to mobile touch inputs",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-user-nothingid-working"
-        ]
-      },
-      "acceptanceCriteria": [
-        "All buttons respond to tap/touch events",
-        "Navigation menu opens and closes on mobile",
-        "Cards and content are tappable",
-        "Video player controls work with touch",
-        "Dialog/modal overlays respond correctly to touch"
-      ]
-    },
-    {
-      "id": "REQ-10",
-      "text": "Fix mobile viewport rendering issues including proper scaling, scroll behavior, and layout overflow that may be preventing content from displaying correctly on mobile screens",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-user-nothingid-working"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Page renders at correct mobile viewport dimensions",
-        "Content is not zoomed or cut off",
-        "Scrolling works smoothly vertically and horizontally where appropriate",
-        "No horizontal overflow causing unwanted side-scrolling"
-      ]
-    },
-    {
-      "id": "REQ-11",
-      "text": "Test and fix service worker caching strategy on mobile browsers to ensure proper asset loading, offline functionality, and cache updates without blocking app initialization",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-user-nothingid-working"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Service worker installs and activates successfully on mobile",
-        "Cached assets load correctly",
-        "App works in offline mode on mobile",
-        "Service worker updates do not break app functionality"
-      ]
-    },
-    {
-      "id": "REQ-12",
-      "text": "Add comprehensive mobile device debugging capability including error logging, network request monitoring, and device information display to identify root causes of mobile failures",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-user-nothingid-working"
-        ]
-      },
-      "acceptanceCriteria": [
-        "Detailed error logs accessible on mobile devices",
-        "Network requests and failures are logged",
-        "Device information (browser, OS, viewport) is captured",
-        "Debugging information can be exported or viewed in-app"
+        "All navigation links and buttons respond to touch input",
+        "Internet Identity authentication completes successfully on mobile browsers",
+        "Movie catalog displays correctly and cards are tappable",
+        "Video playback controls work with touch input",
+        "Forms can be filled out and submitted on mobile devices",
+        "Dialogs and modals open, display correctly, and can be dismissed on mobile",
+        "Service worker loads correctly and does not prevent app initialization"
       ]
     }
   ],
   "constraints": [
-    "Must maintain compatibility with existing Internet Identity authentication system",
-    "Cannot modify backend/main.mo or backend actor logic",
-    "Must preserve all existing feature functionality while fixing mobile issues",
-    "Service worker modifications must not break desktop browser functionality"
+    "Do not modify frontend/src/hooks/useInternetIdentity.ts or frontend/src/hooks/useActor.ts",
+    "Do not modify frontend/src/components/ui/* components",
+    "Preserve existing mobile optimization work in frontend/index.html viewport configuration",
+    "Maintain service worker functionality while ensuring it does not block app loading"
   ],
   "nonGoals": [
-    "Adding new features or functionality beyond mobile bug fixes",
-    "Redesigning UI components or layout structure",
-    "Changing authentication provider from Internet Identity",
-    "Implementing native mobile apps or React Native"
+    "Adding new features or functionality beyond fixing mobile compatibility",
+    "Redesigning the UI or changing the visual layout",
+    "Modifying backend logic or data models"
   ],
   "imageRequirements": {
     "required": [],

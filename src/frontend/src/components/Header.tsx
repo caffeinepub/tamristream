@@ -1,44 +1,41 @@
-import { Button } from '@/components/ui/button';
-import { Film, Menu, X } from 'lucide-react';
-import { Link, useNavigate } from '@tanstack/react-router';
 import { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { Menu, X, Film } from 'lucide-react';
+import { useNavigate, useLocation } from '@tanstack/react-router';
 import { useInternetIdentity } from '../hooks/useInternetIdentity';
 import { useQueryClient } from '@tanstack/react-query';
-import { useIsAdmin } from '../hooks/useQueries';
-import { OfflineIndicator } from './OfflineIndicator';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { login, clear, loginStatus, identity } = useInternetIdentity();
-  const { data: isAdmin = false } = useIsAdmin();
-  const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const location = useLocation();
+  const { login, clear, loginStatus, identity } = useInternetIdentity();
+  const queryClient = useQueryClient();
 
   const isAuthenticated = !!identity;
-  const disabled = loginStatus === 'logging-in';
-  const buttonText = loginStatus === 'logging-in' ? 'Logging in...' : isAuthenticated ? 'Logout' : 'Login';
+  const isLoggingIn = loginStatus === 'logging-in';
 
-  // Close mobile menu on route change
+  // Close mobile menu when route changes
   useEffect(() => {
     setMobileMenuOpen(false);
-  }, [navigate]);
+  }, [location.pathname]);
 
   // Prevent body scroll when mobile menu is open
   useEffect(() => {
     if (mobileMenuOpen) {
       document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.width = '100%';
     } else {
       document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
     }
+
     return () => {
       document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
     };
   }, [mobileMenuOpen]);
 
@@ -60,20 +57,11 @@ export function Header() {
     }
   };
 
-  const handleMobileMenuToggle = () => {
-    setMobileMenuOpen(prev => !prev);
-  };
-
-  const closeMobileMenu = () => {
-    setMobileMenuOpen(false);
-  };
-
   const navItems = [
     { label: 'Movies', path: '/movies' },
     { label: 'Music', path: '/music-streaming' },
     { label: 'Sports', path: '/sports' },
-    { label: 'Kids Zone', path: '/kids-zone' },
-    { label: 'Podcasts', path: '/podcasts-radio' },
+    { label: 'Creator Portal', path: '/creator-portal' },
   ];
 
   return (
@@ -81,166 +69,90 @@ export function Header() {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link 
-            to="/" 
-            className="flex items-center space-x-2 hover:opacity-80 transition-opacity tap-target"
-            onClick={closeMobileMenu}
+          <button
+            onClick={() => navigate({ to: '/' })}
+            className="flex items-center gap-2 tap-target"
+            aria-label="TamriStream Home"
           >
-            <img 
-              src="/assets/generated/app-logo.dim_512x512.png" 
-              alt="TamriStream" 
-              className="w-10 h-10"
-            />
-            <span className="text-xl font-bold bg-gradient-to-r from-amber-500 to-amber-300 bg-clip-text text-transparent">
-              TamriStream
-            </span>
-          </Link>
+            <Film className="w-8 h-8 text-primary" />
+            <span className="text-xl font-bold gradient-text">TamriStream</span>
+          </button>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center space-x-1">
+          <nav className="hidden md:flex items-center gap-6">
             {navItems.map((item) => (
-              <Link
+              <button
                 key={item.path}
-                to={item.path}
-                className="px-4 py-2 text-sm font-medium text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors tap-target"
+                onClick={() => navigate({ to: item.path })}
+                className="tap-target text-sm font-medium hover:text-primary transition-colors"
+                aria-label={item.label}
               >
                 {item.label}
-              </Link>
+              </button>
             ))}
-            
-            {isAdmin && (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="text-amber-500 hover:text-amber-400 hover:bg-zinc-800 tap-target">
-                    Admin
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56">
-                  <DropdownMenuItem onClick={() => navigate({ to: '/admin-approval' })} className="tap-target">
-                    Content Approval
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate({ to: '/admin-partnership' })} className="tap-target">
-                    Partnership Applications
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate({ to: '/reviewer-dashboard' })} className="tap-target">
-                    Reviewer Dashboard
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => navigate({ to: '/diagnostics' })} className="tap-target">
-                    Diagnostics
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )}
           </nav>
 
-          {/* Right Side Actions */}
-          <div className="flex items-center space-x-2 sm:space-x-3">
-            <OfflineIndicator />
-            
-            {isAuthenticated && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => {
-                  navigate({ to: '/profile' });
-                  closeMobileMenu();
-                }}
-                className="hidden md:flex text-zinc-300 hover:text-white tap-target"
-              >
-                Profile
-              </Button>
-            )}
-
+          {/* Desktop Auth Button */}
+          <div className="hidden md:block">
             <Button
               onClick={handleAuth}
-              disabled={disabled}
-              size="sm"
-              className={`tap-target ${
-                isAuthenticated
-                  ? 'bg-zinc-800 hover:bg-zinc-700 text-white'
-                  : 'bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-black font-semibold'
-              }`}
+              disabled={isLoggingIn}
+              className="tap-target"
+              variant={isAuthenticated ? 'outline' : 'default'}
             >
-              {buttonText}
-            </Button>
-
-            {/* Mobile Menu Button */}
-            <Button
-              variant="ghost"
-              size="icon"
-              className="lg:hidden text-white tap-target"
-              onClick={handleMobileMenuToggle}
-              aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
-              aria-expanded={mobileMenuOpen}
-            >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {isLoggingIn ? 'Logging in...' : isAuthenticated ? 'Logout' : 'Login'}
             </Button>
           </div>
+
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden tap-target p-2"
+            aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={mobileMenuOpen}
+          >
+            {mobileMenuOpen ? (
+              <X className="w-6 h-6" />
+            ) : (
+              <Menu className="w-6 h-6" />
+            )}
+          </button>
         </div>
-
-        {/* Mobile Menu */}
-        {mobileMenuOpen && (
-          <div className="lg:hidden py-4 border-t border-zinc-800 animate-slide-in">
-            <nav className="flex flex-col space-y-1">
-              {navItems.map((item) => (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  className="px-4 py-3 text-base font-medium text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors tap-target active:bg-zinc-700"
-                  onClick={closeMobileMenu}
-                >
-                  {item.label}
-                </Link>
-              ))}
-              
-              {isAuthenticated && (
-                <Link
-                  to="/profile"
-                  className="px-4 py-3 text-base font-medium text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors tap-target active:bg-zinc-700"
-                  onClick={closeMobileMenu}
-                >
-                  Profile
-                </Link>
-              )}
-
-              {isAdmin && (
-                <>
-                  <div className="px-4 py-2 text-xs font-semibold text-amber-500 uppercase mt-2">Admin</div>
-                  <Link
-                    to="/admin-approval"
-                    className="px-4 py-3 text-base font-medium text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors tap-target active:bg-zinc-700"
-                    onClick={closeMobileMenu}
-                  >
-                    Content Approval
-                  </Link>
-                  <Link
-                    to="/admin-partnership"
-                    className="px-4 py-3 text-base font-medium text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors tap-target active:bg-zinc-700"
-                    onClick={closeMobileMenu}
-                  >
-                    Partnership Applications
-                  </Link>
-                  <Link
-                    to="/reviewer-dashboard"
-                    className="px-4 py-3 text-base font-medium text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors tap-target active:bg-zinc-700"
-                    onClick={closeMobileMenu}
-                  >
-                    Reviewer Dashboard
-                  </Link>
-                  <Link
-                    to="/diagnostics"
-                    className="px-4 py-3 text-base font-medium text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors tap-target active:bg-zinc-700"
-                    onClick={closeMobileMenu}
-                  >
-                    Diagnostics
-                  </Link>
-                </>
-              )}
-            </nav>
-          </div>
-        )}
       </div>
+
+      {/* Mobile Menu */}
+      {mobileMenuOpen && (
+        <div className="md:hidden fixed inset-0 top-16 bg-black/98 z-40 overflow-y-auto scrollable">
+          <nav className="container mx-auto px-4 py-6 space-y-4">
+            {navItems.map((item) => (
+              <button
+                key={item.path}
+                onClick={() => {
+                  navigate({ to: item.path });
+                  setMobileMenuOpen(false);
+                }}
+                className="block w-full text-left tap-target px-4 py-3 rounded-lg hover:bg-zinc-800 transition-colors"
+                aria-label={item.label}
+              >
+                {item.label}
+              </button>
+            ))}
+            <div className="pt-4 border-t border-zinc-800">
+              <Button
+                onClick={() => {
+                  handleAuth();
+                  setMobileMenuOpen(false);
+                }}
+                disabled={isLoggingIn}
+                className="w-full tap-target"
+                variant={isAuthenticated ? 'outline' : 'default'}
+              >
+                {isLoggingIn ? 'Logging in...' : isAuthenticated ? 'Logout' : 'Login'}
+              </Button>
+            </div>
+          </nav>
+        </div>
+      )}
     </header>
   );
 }

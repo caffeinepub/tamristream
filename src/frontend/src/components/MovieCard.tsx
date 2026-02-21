@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -9,11 +8,20 @@ import { OptimizedImage } from './OptimizedImage';
 
 interface MovieCardProps {
   movie: Movie;
-  onSelect: (movie: Movie) => void;
+  onClick?: (movie: Movie) => void;
+  onSelect?: (movie: Movie) => void;
 }
 
-export function MovieCard({ movie, onSelect }: MovieCardProps) {
+export function MovieCard({ movie, onClick, onSelect }: MovieCardProps) {
   const navigate = useNavigate();
+
+  const handleClick = () => {
+    if (onClick) {
+      onClick(movie);
+    } else if (onSelect) {
+      onSelect(movie);
+    }
+  };
 
   const handleViewTransparency = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -23,7 +31,7 @@ export function MovieCard({ movie, onSelect }: MovieCardProps) {
   return (
     <Card 
       className="group overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-2xl hover:scale-105 bg-zinc-900 border-zinc-800"
-      onClick={() => onSelect(movie)}
+      onClick={handleClick}
     >
       <div className="relative aspect-[2/3] overflow-hidden">
         <OptimizedImage
@@ -37,10 +45,10 @@ export function MovieCard({ movie, onSelect }: MovieCardProps) {
           <div className="absolute bottom-0 left-0 right-0 p-4 space-y-2">
             <Button 
               size="sm" 
-              className="w-full bg-amber-500 hover:bg-amber-600 text-black font-semibold"
+              className="w-full bg-amber-500 hover:bg-amber-600 text-black font-semibold tap-target"
               onClick={(e) => {
                 e.stopPropagation();
-                onSelect(movie);
+                handleClick();
               }}
             >
               <Play className="w-4 h-4 mr-2" />
@@ -49,7 +57,7 @@ export function MovieCard({ movie, onSelect }: MovieCardProps) {
             <Button 
               size="sm" 
               variant="outline"
-              className="w-full bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white/20"
+              className="w-full bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white/20 tap-target"
               onClick={handleViewTransparency}
             >
               <Eye className="w-4 h-4 mr-2" />
@@ -78,7 +86,7 @@ export function MovieCard({ movie, onSelect }: MovieCardProps) {
           <Button 
             variant="link" 
             size="sm" 
-            className="h-auto p-0 text-amber-500 hover:text-amber-400"
+            className="h-auto p-0 text-amber-500 hover:text-amber-400 tap-target"
             onClick={handleViewTransparency}
           >
             Blockchain Verified →

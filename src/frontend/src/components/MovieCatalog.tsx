@@ -1,58 +1,42 @@
-import { useSearchMovies, useGetTopPicks } from '../hooks/useQueries';
-import { MovieCard } from './MovieCard';
-import { MovieDialog } from './MovieDialog';
-import { TopPicksSection } from './TopPicksSection';
-import { FeaturedMovieSlider } from './FeaturedMovieSlider';
-import { HeroBanner } from './HeroBanner';
-import { GenresSection } from './GenresSection';
-import { HowItWorksSection } from './HowItWorksSection';
-import { AIIndieDiscovery } from './AIIndieDiscovery';
-import { TransparentRanking } from './TransparentRanking';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Film, Search, Sparkles } from 'lucide-react';
+import { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { useState } from 'react';
-import { useDebounce } from 'react-use';
+import { Search, Sparkles } from 'lucide-react';
+import { useGetAllMovies } from '../hooks/useQueries';
+import { MovieCard } from './MovieCard';
+import { MovieDialog } from './MovieDialog';
+import { Movie } from '../backend';
+import { Skeleton } from '@/components/ui/skeleton';
 import { useNavigate } from '@tanstack/react-router';
-import type { Movie } from '../backend';
 
-interface MovieCatalogProps {
-  onWatchPartyCreate?: (partyId: string) => void;
-}
-
-export function MovieCatalog({ onWatchPartyCreate }: MovieCatalogProps) {
+export function MovieCatalog() {
+  const [searchTerm, setSearchTerm] = useState('');
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const { data: movies = [], isLoading } = useGetAllMovies();
   const navigate = useNavigate();
 
-  useDebounce(
-    () => {
-      setDebouncedSearchQuery(searchQuery);
-    },
-    300,
-    [searchQuery]
+  const filteredMovies = movies.filter(
+    (movie) =>
+      movie.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      movie.description.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const { data: movies, isLoading } = useSearchMovies(debouncedSearchQuery);
-  const { data: topPicks, isLoading: topPicksLoading } = useGetTopPicks();
+  const handleMovieClick = (movie: Movie) => {
+    setSelectedMovie(movie);
+    setDialogOpen(true);
+  };
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-black pt-16">
-        <div className="w-full h-[600px] md:h-[700px] bg-gradient-to-b from-zinc-900 to-black animate-pulse" />
-        <div className="container mx-auto px-4 py-8">
-          <div className="space-y-8">
-            <div className="space-y-4">
-              <Skeleton className="h-12 w-64 bg-zinc-800" />
-              <Skeleton className="h-6 w-96 bg-zinc-800" />
-            </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-              {Array.from({ length: 10 }).map((_, i) => (
-                <div key={i} className="space-y-4">
-                  <Skeleton className="aspect-[16/9] w-full rounded-lg bg-zinc-800" />
-                </div>
+      <div className="min-h-screen bg-gradient-to-b from-black via-zinc-900 to-black pt-24 pb-16">
+        <div className="container mx-auto px-4">
+          <div className="max-w-7xl mx-auto space-y-8">
+            <Skeleton className="h-12 w-64 bg-zinc-800" />
+            <Skeleton className="h-12 w-full bg-zinc-800" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+                <Skeleton key={i} className="h-96 bg-zinc-800" />
               ))}
             </div>
           </div>
@@ -62,122 +46,76 @@ export function MovieCatalog({ onWatchPartyCreate }: MovieCatalogProps) {
   }
 
   return (
-    <div className="min-h-screen bg-black pt-16">
-      {/* Hero Banner - Only show when not searching */}
-      {!searchQuery && <HeroBanner />}
-
-      {/* Featured Movies Carousel - Only show when not searching */}
-      {!searchQuery && (
-        <div className="container mx-auto px-4 py-16">
-          <FeaturedMovieSlider 
-            onMovieSelect={setSelectedMovie}
-            onWatchTrailer={setSelectedMovie}
-          />
-        </div>
-      )}
-
-      {/* AI Indie Discovery Section - Only show when not searching */}
-      {!searchQuery && (
-        <div className="container mx-auto px-4 py-16 bg-gradient-to-b from-black via-purple-950/10 to-black">
-          <AIIndieDiscovery movies={movies || []} isLoading={isLoading} />
-          <div className="mt-8 text-center">
-            <Button
-              onClick={() => navigate({ to: '/ai-personalization' })}
-              variant="outline"
-              className="border-purple-500/30 text-purple-400 hover:bg-purple-500/10"
-            >
-              <Sparkles className="w-4 h-4 mr-2" />
-              Explore More AI Features
-            </Button>
+    <div className="min-h-screen bg-gradient-to-b from-black via-zinc-900 to-black pt-24 pb-16">
+      <div className="container mx-auto px-4">
+        <div className="max-w-7xl mx-auto space-y-8">
+          {/* Header */}
+          <div className="space-y-4">
+            <h1 className="text-4xl md:text-5xl font-bold gradient-text">Movie Catalog</h1>
+            <p className="text-lg text-muted-foreground">
+              Discover amazing African cinema from talented creators
+            </p>
           </div>
-        </div>
-      )}
 
-      {/* Transparent Ranking Section - Only show when not searching */}
-      {!searchQuery && (
-        <div className="container mx-auto px-4 py-16">
-          <TransparentRanking showDetailed={false} />
-        </div>
-      )}
-
-      {/* Genres Section - Only show when not searching */}
-      {!searchQuery && <GenresSection onMovieSelect={setSelectedMovie} />}
-
-      {/* How It Works Section - Only show when not searching */}
-      {!searchQuery && <HowItWorksSection />}
-
-      {/* Search and Movies Section */}
-      <div className="container mx-auto px-4 py-16" id="movies-section">
-        <div className="space-y-12">
-          {/* Search Header */}
-          <div className="space-y-6">
-            <div className="flex items-center space-x-3">
-              <Film className="w-8 h-8 text-amber-500" />
-              <h2 className="text-3xl font-bold text-white">Browse Movies</h2>
-            </div>
-            
-            {/* Search */}
-            <div className="relative max-w-2xl">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-400" />
-              <Input
-                placeholder="Search movies by title or description..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-12 h-14 bg-zinc-900 border-zinc-800 text-white placeholder:text-zinc-500 focus:border-amber-500 focus:ring-amber-500"
-              />
+          {/* AI Indie Discovery Section */}
+          <div className="bg-gradient-to-r from-blue-950/30 to-purple-950/30 border border-blue-500/20 rounded-lg p-6">
+            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+              <div className="flex-1">
+                <h2 className="text-2xl font-bold mb-2 flex items-center gap-2">
+                  <Sparkles className="w-6 h-6 text-blue-500" />
+                  AI-Powered Indie Discovery
+                </h2>
+                <p className="text-muted-foreground">
+                  Our transparent algorithm surfaces hidden gems and underrated independent films
+                  based on quality, not just popularity.
+                </p>
+              </div>
+              <Button
+                onClick={() => navigate({ to: '/ai-personalization' })}
+                className="tap-target shrink-0"
+              >
+                Explore AI Features
+              </Button>
             </div>
           </div>
 
-          {/* Top Picks Section - Only show when not searching */}
-          {!searchQuery && (
-            <TopPicksSection 
-              topPicks={topPicks || []} 
-              isLoading={topPicksLoading}
-              onMovieSelect={setSelectedMovie}
+          {/* Search */}
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" />
+            <Input
+              type="search"
+              placeholder="Search movies..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 h-12 text-base"
             />
-          )}
+          </div>
 
-          {/* Movies Grid */}
-          {!movies || movies.length === 0 ? (
-            <div className="text-center py-16">
-              <Film className="w-16 h-16 text-zinc-700 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-white mb-2">
-                {searchQuery ? 'No movies found' : 'No movies available'}
-              </h3>
-              <p className="text-zinc-400">
-                {searchQuery 
-                  ? 'Try adjusting your search terms to find what you\'re looking for.'
-                  : 'Check back soon for new additions to our catalog.'
-                }
-              </p>
-            </div>
-          ) : (
-            <div>
-              <h3 className="text-2xl font-bold text-white mb-6">
-                {searchQuery ? `Search Results for "${searchQuery}"` : 'All Movies'}
-              </h3>
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-                {movies.map((movie) => (
+          {/* Movie Grid */}
+          <div className="scrollable">
+            {filteredMovies.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {filteredMovies.map((movie, index) => (
                   <MovieCard
-                    key={movie.title}
+                    key={index}
                     movie={movie}
-                    onSelect={setSelectedMovie}
+                    onClick={() => handleMovieClick(movie)}
                   />
                 ))}
               </div>
-            </div>
-          )}
+            ) : (
+              <div className="text-center py-16">
+                <p className="text-xl text-muted-foreground">No movies found</p>
+                <p className="text-sm text-muted-foreground mt-2">
+                  Try adjusting your search terms
+                </p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* Movie Detail Dialog */}
-      <MovieDialog
-        movie={selectedMovie}
-        open={!!selectedMovie}
-        onOpenChange={(open) => !open && setSelectedMovie(null)}
-        onWatchPartyCreate={onWatchPartyCreate}
-      />
+      <MovieDialog movie={selectedMovie} open={dialogOpen} onOpenChange={setDialogOpen} />
     </div>
   );
 }
-

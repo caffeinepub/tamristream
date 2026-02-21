@@ -1,11 +1,12 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 7,
+  "projectStateVersion": 9,
   "summary": "New project",
   "architectural_notes": [],
   "known_issues": [
     "Mobile phone compatibility issues - app not working on mobile devices",
-    "Version 202 tested on mobile - nothing is working (complete functionality failure)"
+    "Version 202 tested on mobile - nothing is working (complete functionality failure)",
+    "Scrolling not working on mobile devices (Version 203)"
   ],
   "isFixRequest": true,
   "existing_features": [
@@ -64,6 +65,22 @@
         "REQ-11"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-diagnose-and-fix-scrolling-issues-on-mobile-devices-by-examining-css-overflow-properties-touch-action-directives-viewport-height-calculations-and-scroll-event-handlers-across-all-scrollable-containers-including-main-content-areas-dialogs-and-sidebar-navigation",
+      "title": "Diagnose and fix scrolling issues on mobile devices by examining CSS overflow properties, touch-action directives, viewport height calculations, and scroll event handlers across all scrollable containers including main content areas, dialogs, and sidebar navigation",
+      "reqIds": [
+        "REQ-13"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-perform-comprehensive-mobile-compatibility-verification-testing-across-all-major-features-to-ensure-the-application-functions-correctly-on-mobile-devices-including-navigation-authentication-video-playback-form-submission-and-interactive-elements",
+      "title": "Perform comprehensive mobile compatibility verification testing across all major features to ensure the application functions correctly on mobile devices, including navigation, authentication, video playback, form submission, and interactive elements",
+      "reqIds": [
+        "REQ-14"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -105,6 +122,12 @@
       "reqIds": [
         "REQ-12"
       ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-13",
+      "summary": "Fix scrolling functionality on mobile devices",
+      "reqIds": [],
       "status": "pending"
     }
   ],

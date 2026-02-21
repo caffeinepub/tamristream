@@ -1,263 +1,113 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Diagnose and fix complete mobile functionality failure in Version 202",
+  "title": "Fix Mobile Scrolling and Verify Mobile Compatibility",
   "requirements": [
     {
-      "id": "REQ-7",
-      "summary": "Investigate and fix critical JavaScript errors preventing the entire application from loading or functioning on mobile devices",
+      "id": "REQ-13",
+      "summary": "Fix scrolling functionality on mobile devices by diagnosing and resolving CSS overflow, touch-action, viewport height, and scroll event handler issues",
       "acceptanceCriteria": [
-        "Application loads successfully on mobile browsers (iOS Safari, Chrome Android)",
-        "No critical JavaScript errors in mobile browser console",
-        "Main React application renders and mounts correctly",
-        "Service worker registers without errors"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/main.tsx",
-          "operation": "modify",
-          "description": "Add mobile-specific error boundary wrapping and early error detection for module loading failures. Include console logging to capture initialization errors that prevent React from mounting."
-        },
-        {
-          "path": "frontend/src/components/ErrorBoundary.tsx",
-          "operation": "modify",
-          "description": "Enhance error boundary to detect and report mobile-specific errors including module loading failures, service worker conflicts, and React hydration errors. Add mobile device detection and specialized error messages."
-        },
-        {
-          "path": "frontend/src/sw/registerServiceWorker.ts",
-          "operation": "modify",
-          "description": "Add robust error handling for service worker registration failures on mobile browsers. Implement fallback behavior when service worker fails to register, ensuring app continues to load. Add mobile browser detection to adjust registration strategy."
-        },
-        {
-          "path": "frontend/public/sw.js",
-          "operation": "modify",
-          "description": "Fix service worker caching strategy that may be blocking critical resources on mobile. Ensure install and activate events don't prevent main bundle from loading. Add error handlers for fetch events that could cause silent failures on mobile networks."
-        },
-        {
-          "path": "frontend/index.html",
-          "operation": "modify",
-          "description": "Verify viewport meta tag configuration for mobile rendering. Add inline script to detect and log critical JavaScript errors before React loads. Ensure manifest.json and service worker script references are correct."
-        },
-        {
-          "path": "frontend/src/hooks/useMobileErrorLogger.ts",
-          "operation": "create",
-          "description": "Create custom hook that captures and logs all JavaScript errors, unhandled promise rejections, and module loading failures specifically on mobile devices. Store errors in localStorage for debugging and provide method to export error logs."
-        }
-      ]
-    },
-    {
-      "id": "REQ-8",
-      "summary": "Fix Internet Identity authentication flow for mobile browsers",
-      "acceptanceCriteria": [
-        "Login button responds to touch on mobile",
-        "Internet Identity redirect completes successfully",
-        "User is authenticated and redirected back to app after login",
-        "Authentication state persists correctly on mobile"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/hooks/useInternetIdentity.ts",
-          "operation": "modify",
-          "description": "Fix Internet Identity redirect URL handling for mobile browsers. Ensure AuthClient properly handles mobile browser redirects and window focus events. Add mobile-specific session persistence and recovery logic."
-        },
-        {
-          "path": "frontend/src/components/LoginButton.tsx",
-          "operation": "modify",
-          "description": "Ensure login button has proper touch event handlers and touch-action CSS properties. Add loading state that prevents multiple taps during authentication. Implement mobile-friendly error messages for authentication failures."
-        },
-        {
-          "path": "frontend/src/components/LoginScreen.tsx",
-          "operation": "modify",
-          "description": "Fix authentication flow on mobile by ensuring proper redirect handling after Internet Identity callback. Add mobile browser detection to adjust authentication strategy. Implement fallback for browsers with strict popup/redirect policies."
-        },
-        {
-          "path": "frontend/src/components/Header.tsx",
-          "operation": "modify",
-          "description": "Verify authentication controls work with touch events. Ensure login/logout buttons in header respond properly to mobile taps. Add visual feedback for touch interactions."
-        }
-      ]
-    },
-    {
-      "id": "REQ-9",
-      "summary": "Verify and fix touch event handlers across all interactive elements",
-      "acceptanceCriteria": [
-        "All buttons respond to tap/touch events",
-        "Navigation menu opens and closes on mobile",
-        "Cards and content are tappable",
-        "Video player controls work with touch",
-        "Dialog/modal overlays respond correctly to touch"
+        "Users can scroll vertically through content on mobile devices using touch gestures",
+        "Scrolling works in all major content areas: movie catalog, dialogs, profile pages, and navigation menus",
+        "No CSS properties block touch-based scrolling (overflow: hidden, touch-action: none, or similar)",
+        "Scroll behavior is smooth and responsive without lag or stuck scroll positions",
+        "Both iOS Safari and Android Chrome support scrolling correctly"
       ],
       "file_operations": [
         {
           "path": "frontend/src/index.css",
           "operation": "modify",
-          "description": "Add global CSS rules to ensure all interactive elements have proper touch-action properties. Set minimum tap target sizes (44x44px) for accessibility. Add CSS to prevent touch delay and improve touch responsiveness."
-        },
-        {
-          "path": "frontend/src/components/Header.tsx",
-          "operation": "modify",
-          "description": "Fix mobile navigation menu touch handlers. Ensure hamburger menu button responds to touch and menu overlay can be dismissed with tap. Add proper z-index and touch event propagation handling."
-        },
-        {
-          "path": "frontend/src/components/MovieCard.tsx",
-          "operation": "modify",
-          "description": "Ensure movie cards respond to touch events. Add touch-action CSS and verify onClick handlers work on mobile. Implement proper touch feedback with active states."
+          "description": "Audit and fix global CSS that may block mobile scrolling: remove or adjust overflow:hidden on body/html, ensure touch-action is not set to none globally, verify mobile-optimized base styles allow natural scrolling, and add -webkit-overflow-scrolling: touch for iOS momentum scrolling where needed"
         },
         {
           "path": "frontend/src/components/MovieDialog.tsx",
           "operation": "modify",
-          "description": "Fix video player touch controls for mobile. Ensure play/pause, seeking, volume, and fullscreen controls respond to touch. Add mobile-friendly control layout and touch gesture support. Fix dialog overlay touch dismissal."
-        },
-        {
-          "path": "frontend/src/components/FeaturedMovieSlider.tsx",
-          "operation": "modify",
-          "description": "Implement touch swipe gestures for slider navigation on mobile. Ensure navigation buttons respond to touch. Add touch drag support for carousel."
-        },
-        {
-          "path": "frontend/src/components/WatchPartyView.tsx",
-          "operation": "modify",
-          "description": "Fix touch interaction for video controls, chat input, and reaction buttons. Ensure all interactive elements within watch party interface respond to mobile touch events."
-        },
-        {
-          "path": "frontend/src/hooks/useTouchFix.ts",
-          "operation": "create",
-          "description": "Create utility hook that ensures touch event compatibility across mobile browsers. Handles touch event polyfills, prevents default behaviors that interfere with interactions, and provides normalized touch event handlers."
-        }
-      ]
-    },
-    {
-      "id": "REQ-10",
-      "summary": "Fix mobile viewport rendering issues including proper scaling, scroll behavior, and layout overflow",
-      "acceptanceCriteria": [
-        "Page renders at correct mobile viewport dimensions",
-        "Content is not zoomed or cut off",
-        "Scrolling works smoothly vertically and horizontally where appropriate",
-        "No horizontal overflow causing unwanted side-scrolling"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/index.html",
-          "operation": "modify",
-          "description": "Verify and fix viewport meta tag to prevent zoom issues. Ensure width=device-width, initial-scale=1.0, and maximum-scale=5.0 are set correctly. Add mobile-web-app-capable meta tags."
-        },
-        {
-          "path": "frontend/src/index.css",
-          "operation": "modify",
-          "description": "Fix body and html elements to prevent horizontal overflow. Add overflow-x: hidden to container elements. Ensure all width values use responsive units. Fix any fixed-width elements that exceed viewport width on mobile."
-        },
-        {
-          "path": "frontend/tailwind.config.js",
-          "operation": "modify",
-          "description": "Review and fix responsive breakpoints for mobile. Ensure container max-widths don't cause horizontal overflow. Add mobile-specific utility classes for safe areas and touch targets."
+          "description": "Fix dialog scrolling on mobile: ensure dialog content area has proper overflow-y: auto with touch-action: pan-y, verify backdrop doesn't prevent scroll events, check that video player controls don't interfere with touch gestures, and ensure modal height calculations work correctly on mobile viewports including iOS Safari's dynamic viewport"
         },
         {
           "path": "frontend/src/components/Header.tsx",
           "operation": "modify",
-          "description": "Fix header layout for mobile viewport. Ensure header doesn't overflow horizontally and adjusts properly to screen width. Implement responsive mobile menu that doesn't cause viewport issues."
+          "description": "Fix mobile menu scrolling: ensure mobile navigation drawer/menu has proper overflow handling, verify touch events work correctly on menu items, check that fixed header positioning doesn't create scroll conflicts, and ensure hamburger menu toggle works reliably on touch devices"
         },
         {
           "path": "frontend/src/components/MovieCatalog.tsx",
           "operation": "modify",
-          "description": "Fix movie catalog layout for mobile screens. Ensure grid layouts use responsive columns that don't overflow. Adjust spacing and sizing for mobile viewport."
+          "description": "Fix catalog scrolling on mobile: ensure main content area has proper overflow-y: auto, verify search input doesn't prevent scrolling when focused on iOS, check that movie grid/list scrolls smoothly with touch gestures, and ensure infinite scroll or pagination works correctly on mobile"
         },
         {
-          "path": "frontend/src/components/Footer.tsx",
+          "path": "frontend/src/components/UserProfile.tsx",
           "operation": "modify",
-          "description": "Fix footer layout for mobile screens. Ensure footer content stacks properly on narrow viewports without horizontal overflow."
+          "description": "Fix profile page scrolling: ensure tabs content scrolls properly on mobile, verify settings panels within profile have correct overflow handling, check that nested scrollable areas (favorites list, watch history) work with touch gestures, and ensure no fixed positioning blocks scroll"
         },
         {
           "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "Fix main app container to prevent viewport issues. Ensure routing doesn't cause layout shifts or overflow on mobile. Add mobile-specific layout constraints."
+          "description": "Fix app container scrolling: ensure root app container doesn't have overflow:hidden that blocks scrolling, verify router outlet allows natural scrolling behavior, check that no global event listeners prevent default scroll behavior on touch devices, and ensure service worker doesn't interfere with scroll events"
+        },
+        {
+          "path": "frontend/tailwind.config.js",
+          "operation": "modify",
+          "description": "Add mobile-friendly scrolling utilities: ensure touch-target utilities are large enough (min 44x44px), verify no custom scrollbar styles break mobile scrolling, add safe-area-inset padding utilities for iOS notch support, and ensure responsive breakpoints account for mobile viewport behaviors"
         }
       ]
     },
     {
-      "id": "REQ-11",
-      "summary": "Test and fix service worker caching strategy on mobile browsers",
+      "id": "REQ-14",
+      "summary": "Perform comprehensive mobile compatibility verification across navigation, authentication, video playback, forms, and interactive elements",
       "acceptanceCriteria": [
-        "Service worker installs and activates successfully on mobile",
-        "Cached assets load correctly",
-        "App works in offline mode on mobile",
-        "Service worker updates do not break app functionality"
+        "All navigation links and buttons respond to touch input",
+        "Internet Identity authentication completes successfully on mobile browsers",
+        "Movie catalog displays correctly and cards are tappable",
+        "Video playback controls work with touch input",
+        "Forms can be filled out and submitted on mobile devices",
+        "Dialogs and modals open, display correctly, and can be dismissed on mobile",
+        "Service worker loads correctly and does not prevent app initialization"
       ],
       "file_operations": [
         {
-          "path": "frontend/public/sw.js",
+          "path": "frontend/src/components/Header.tsx",
           "operation": "modify",
-          "description": "Fix service worker caching strategy for mobile browsers. Ensure install event doesn't block app loading with excessive caching. Implement proper cache versioning and cleanup. Add mobile-specific cache strategies for images and API responses."
+          "description": "Verify mobile navigation compatibility: test all navigation links respond to touch events, ensure hamburger menu toggle works reliably on touch devices, verify login/logout button has adequate touch target size (min 44x44px), check that dropdowns/menus work correctly on mobile, and ensure offline indicator displays properly on small screens"
+        },
+        {
+          "path": "frontend/src/components/LoginScreen.tsx",
+          "operation": "modify",
+          "description": "Verify Internet Identity authentication on mobile: test login flow completes on iOS Safari and Android Chrome, ensure authentication popups/redirects work correctly on mobile browsers, verify login button has adequate touch target size, check that authentication state persists correctly across page reloads on mobile, and ensure error messages display properly on small screens"
+        },
+        {
+          "path": "frontend/src/components/MovieCatalog.tsx",
+          "operation": "modify",
+          "description": "Verify movie catalog mobile compatibility: test that movie cards are tappable with adequate touch targets, ensure search input works correctly with mobile keyboards, verify featured slider touch gestures work (swipe left/right), check that genre filters/tabs are accessible on mobile, and ensure loading states display properly on small screens"
+        },
+        {
+          "path": "frontend/src/components/MovieDialog.tsx",
+          "operation": "modify",
+          "description": "Verify video playback and dialog mobile compatibility: test video player controls respond to touch (play/pause, volume, fullscreen), ensure quality selector popover works on mobile, verify rating/review forms can be filled and submitted on mobile devices, check that dialog can be dismissed via close button or backdrop tap on mobile, test watch party creation works on touch devices, and ensure adaptive streaming adjusts quality appropriately on mobile connections"
+        },
+        {
+          "path": "frontend/src/components/UserProfile.tsx",
+          "operation": "modify",
+          "description": "Verify profile forms and settings mobile compatibility: test bandwidth settings can be configured on mobile, ensure data saver toggle works with touch input, verify favorites can be added/removed on mobile, check that tab navigation works correctly on small screens, and ensure all interactive elements have adequate touch target sizes"
+        },
+        {
+          "path": "frontend/src/components/CreatorPortal.tsx",
+          "operation": "modify",
+          "description": "Verify creator forms mobile compatibility: test film submission form can be filled on mobile devices, ensure file upload inputs work correctly on mobile browsers, verify dropdowns and selects work on iOS and Android, check that form validation displays errors properly on small screens, and ensure submit buttons are accessible and tappable"
         },
         {
           "path": "frontend/src/sw/registerServiceWorker.ts",
           "operation": "modify",
-          "description": "Fix service worker registration timing and update handling on mobile. Ensure registration doesn't block initial page load. Implement proper update detection and notification for mobile users. Add fallback when service worker fails."
+          "description": "Verify service worker mobile compatibility: ensure service worker registration doesn't block app initialization on mobile, test that cache clearing works correctly on mobile browsers, verify update detection works on iOS Safari and Android Chrome, check that service worker errors don't prevent app loading, and ensure offline functionality works correctly on mobile devices"
         },
         {
-          "path": "frontend/src/hooks/useServiceWorkerDiagnostics.ts",
+          "path": "frontend/public/sw.js",
           "operation": "modify",
-          "description": "Enhance service worker diagnostics to detect mobile-specific issues. Add checks for registration state, cache status, and update availability. Provide clear status messages for mobile debugging."
+          "description": "Verify service worker caching strategy on mobile: test that network-first strategy works correctly on mobile connections, ensure cache-first for assets doesn't cause stale content issues, verify offline fallback page displays correctly on mobile, check that cache size limits don't cause issues on mobile devices, and ensure service worker activation completes successfully"
         },
         {
           "path": "frontend/src/components/DiagnosticsPage.tsx",
           "operation": "modify",
-          "description": "Add mobile-specific service worker diagnostics section. Display registration status, cache size, and update availability. Provide buttons to manually update service worker or clear cache on mobile."
-        },
-        {
-          "path": "frontend/src/hooks/useOfflineStatus.ts",
-          "operation": "modify",
-          "description": "Fix offline detection for mobile browsers. Ensure hook properly detects network changes and cached content availability. Add mobile network type detection (WiFi vs cellular)."
-        },
-        {
-          "path": "frontend/src/components/OfflineIndicator.tsx",
-          "operation": "modify",
-          "description": "Enhance offline indicator for mobile with clearer status messages. Show which content is available offline. Provide option to clear cache if service worker is causing issues."
-        }
-      ]
-    },
-    {
-      "id": "REQ-12",
-      "summary": "Add comprehensive mobile device debugging capability",
-      "acceptanceCriteria": [
-        "Detailed error logs accessible on mobile devices",
-        "Network requests and failures are logged",
-        "Device information (browser, OS, viewport) is captured",
-        "Debugging information can be exported or viewed in-app"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/MobileDebugPanel.tsx",
-          "operation": "create",
-          "description": "Create mobile debug panel component that displays captured errors, network logs, device information, and performance metrics. Include floating button to open panel and export logs. Shows browser, OS, viewport size, connection type, and service worker status."
-        },
-        {
-          "path": "frontend/src/hooks/useMobileDebugger.ts",
-          "operation": "create",
-          "description": "Create hook that captures all mobile debugging data including JavaScript errors, network requests, performance metrics, and device information. Stores data in localStorage and provides methods to export or clear logs. Captures user agent, viewport, touch capabilities, and network info."
-        },
-        {
-          "path": "frontend/src/hooks/useNetworkLogger.ts",
-          "operation": "create",
-          "description": "Create hook that intercepts and logs all network requests and responses on mobile. Captures fetch calls, actor calls, and their success/failure status. Stores timing information and error details for debugging."
-        },
-        {
-          "path": "frontend/src/components/DiagnosticsPage.tsx",
-          "operation": "modify",
-          "description": "Add mobile debugging section that displays device information, error logs, network logs, and system health. Include export functionality to download logs for analysis. Add real-time error monitoring display."
-        },
-        {
-          "path": "frontend/src/App.tsx",
-          "operation": "modify",
-          "description": "Integrate mobile debug panel into app with floating access button for mobile users. Ensure debug tools are easily accessible on mobile devices for troubleshooting. Add global error capture that feeds into debug panel."
-        },
-        {
-          "path": "frontend/src/hooks/useRecentRuntimeErrors.ts",
-          "operation": "modify",
-          "description": "Enhance runtime error capture to include mobile-specific error details like touch event failures, viewport issues, and service worker errors. Add error categorization for easier debugging."
-        },
-        {
-          "path": "frontend/src/lib/mobileDeviceInfo.ts",
-          "operation": "create",
-          "description": "Create utility module that collects comprehensive mobile device information including browser type/version, OS type/version, screen dimensions, pixel ratio, touch support, network type, battery status, and memory information for debugging."
+          "description": "Add mobile compatibility diagnostic checks: include checks for touch event support, viewport configuration, service worker status on mobile, network connection type detection, and display mobile-specific diagnostic information to help identify compatibility issues during testing"
         }
       ]
     }
