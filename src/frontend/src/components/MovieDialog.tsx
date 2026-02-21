@@ -171,11 +171,11 @@ export function MovieDialog({ movie, open, onOpenChange, onWatchPartyCreate }: M
         {[1, 2, 3, 4, 5].map((star) => (
           <Star
             key={star}
-            className={`w-5 h-5 ${
+            className={`w-6 h-6 sm:w-5 sm:h-5 ${
               star <= count 
                 ? 'fill-yellow-400 text-yellow-400' 
                 : 'text-gray-300'
-            } ${interactive ? 'cursor-pointer hover:text-yellow-400' : ''}`}
+            } ${interactive ? 'cursor-pointer hover:text-yellow-400 tap-target' : ''}`}
             onClick={() => interactive && onStarClick?.(star)}
           />
         ))}
@@ -188,8 +188,8 @@ export function MovieDialog({ movie, open, onOpenChange, onWatchPartyCreate }: M
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
-          <div className="grid md:grid-cols-2 gap-6">
+        <DialogContent className="max-w-6xl max-h-[90dvh] overflow-y-auto p-4 sm:p-6">
+          <div className="grid md:grid-cols-2 gap-4 sm:gap-6">
             <div className="space-y-4">
               <div className="relative aspect-[2/3] overflow-hidden rounded-lg">
                 <img
@@ -204,9 +204,9 @@ export function MovieDialog({ movie, open, onOpenChange, onWatchPartyCreate }: M
               
               {movie.trailerPath && trailerUrl && (
                 <div className="space-y-2">
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                     <h4 className="font-semibold text-foreground">Trailer</h4>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
                       <DataUsageIndicator
                         quality={currentQuality}
                         isPlaying={isPlaying}
@@ -224,6 +224,7 @@ export function MovieDialog({ movie, open, onOpenChange, onWatchPartyCreate }: M
                     <video
                       ref={videoRef}
                       controls
+                      playsInline
                       className="w-full h-full"
                       poster={`/assets/generated/${movie.coverImagePath}`}
                     >
@@ -242,6 +243,7 @@ export function MovieDialog({ movie, open, onOpenChange, onWatchPartyCreate }: M
                       variant="outline"
                       size="sm"
                       onClick={() => setShowUploadSection(!showUploadSection)}
+                      className="tap-target"
                     >
                       <Upload className="w-4 h-4 mr-2" />
                       Upload Content
@@ -261,7 +263,7 @@ export function MovieDialog({ movie, open, onOpenChange, onWatchPartyCreate }: M
                             if (file) handleFileUpload(file, 'poster');
                           }}
                           disabled={uploadingPoster}
-                          className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
+                          className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90 tap-target"
                         />
                       </div>
                       
@@ -276,7 +278,7 @@ export function MovieDialog({ movie, open, onOpenChange, onWatchPartyCreate }: M
                             if (file) handleFileUpload(file, 'trailer');
                           }}
                           disabled={uploadingTrailer}
-                          className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
+                          className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-primary file:text-primary-foreground hover:file:bg-primary/90 tap-target"
                         />
                       </div>
                     </div>
@@ -285,24 +287,24 @@ export function MovieDialog({ movie, open, onOpenChange, onWatchPartyCreate }: M
               )}
             </div>
 
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               <DialogHeader>
-                <DialogTitle className="text-2xl font-bold text-foreground">
+                <DialogTitle className="text-xl sm:text-2xl font-bold text-foreground">
                   {movie.title}
                 </DialogTitle>
               </DialogHeader>
 
               <Tabs defaultValue="details" className="w-full">
                 <TabsList className="grid w-full grid-cols-3">
-                  <TabsTrigger value="details">Details</TabsTrigger>
-                  <TabsTrigger value="reviews">Reviews</TabsTrigger>
-                  <TabsTrigger value="extras">
+                  <TabsTrigger value="details" className="tap-target text-sm">Details</TabsTrigger>
+                  <TabsTrigger value="reviews" className="tap-target text-sm">Reviews</TabsTrigger>
+                  <TabsTrigger value="extras" className="tap-target text-sm">
                     Extras ({extrasContent.length})
                   </TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="details" className="space-y-4">
-                  <div className="flex items-center space-x-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:space-x-4">
                     {renderStars(averageRating)}
                     <span className="text-sm text-muted-foreground">
                       {averageRating > 0 ? `${averageRating}/5` : 'No ratings yet'} 
@@ -327,33 +329,33 @@ export function MovieDialog({ movie, open, onOpenChange, onWatchPartyCreate }: M
 
                   <div className="space-y-4">
                     <h4 className="font-semibold text-foreground">Synopsis</h4>
-                    <p className="text-muted-foreground leading-relaxed">
+                    <p className="text-muted-foreground leading-relaxed text-sm sm:text-base">
                       {movie.description}
                     </p>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4 py-4 border-t border-border">
                     <div className="flex items-center space-x-2 text-sm">
-                      <Calendar className="w-4 h-4 text-muted-foreground" />
+                      <Calendar className="w-4 h-4 text-muted-foreground shrink-0" />
                       <span className="text-muted-foreground">Release Year:</span>
                       <span className="font-medium">2024</span>
                     </div>
                     <div className="flex items-center space-x-2 text-sm">
-                      <Clock className="w-4 h-4 text-muted-foreground" />
+                      <Clock className="w-4 h-4 text-muted-foreground shrink-0" />
                       <span className="text-muted-foreground">Duration:</span>
                       <span className="font-medium">120 min</span>
                     </div>
                   </div>
 
                   <div className="space-y-3 pt-4">
-                    <Button className="w-full h-12 text-base font-medium bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90">
+                    <Button className="w-full h-12 text-base font-medium bg-gradient-to-r from-primary to-accent hover:from-primary/90 hover:to-accent/90 tap-target">
                       <Play className="w-5 h-5 mr-2" />
                       Watch Now
                     </Button>
                     
                     <Button
                       variant="outline"
-                      className="w-full h-12 text-base font-medium"
+                      className="w-full h-12 text-base font-medium tap-target"
                       onClick={handleCreateWatchParty}
                       disabled={createWatchParty.isPending}
                     >
@@ -363,7 +365,7 @@ export function MovieDialog({ movie, open, onOpenChange, onWatchPartyCreate }: M
                     
                     <Button
                       variant="outline"
-                      className="w-full h-12 text-base font-medium"
+                      className="w-full h-12 text-base font-medium tap-target"
                       onClick={handleToggleFavorite}
                       disabled={addFavorite.isPending || removeFavorite.isPending}
                     >
@@ -394,14 +396,14 @@ export function MovieDialog({ movie, open, onOpenChange, onWatchPartyCreate }: M
                           placeholder="Share your thoughts about this movie..."
                           value={review}
                           onChange={(e) => setReview(e.target.value)}
-                          className="mt-1"
+                          className="mt-1 min-h-[100px]"
                         />
                       </div>
                       
                       <Button
                         onClick={handleSubmitRating}
                         disabled={rating === 0 || rateMovie.isPending}
-                        className="w-full"
+                        className="w-full tap-target"
                       >
                         {rateMovie.isPending ? 'Submitting...' : 'Submit Rating'}
                       </Button>
@@ -426,7 +428,7 @@ export function MovieDialog({ movie, open, onOpenChange, onWatchPartyCreate }: M
                                     <User className="w-3 h-3" />
                                   </AvatarFallback>
                                 </Avatar>
-                                <span className="text-sm font-medium">Anonymous User</span>
+                                <span className="text-sm font-medium">User</span>
                               </div>
                               {renderStars(Number(rating.score))}
                             </div>
@@ -438,36 +440,44 @@ export function MovieDialog({ movie, open, onOpenChange, onWatchPartyCreate }: M
                       </div>
                     </ScrollArea>
                   ) : (
-                    <p className="text-muted-foreground text-center py-8">
+                    <p className="text-sm text-muted-foreground text-center py-8">
                       No reviews yet. Be the first to review this movie!
                     </p>
                   )}
                 </TabsContent>
 
                 <TabsContent value="extras" className="space-y-4">
-                  <div className="flex items-center space-x-2">
-                    <Film className="w-5 h-5 text-primary" />
-                    <h4 className="font-semibold text-foreground">Behind the Scenes & More</h4>
-                  </div>
+                  <h4 className="font-semibold text-foreground">
+                    Bonus Content {extrasContent.length > 0 && `(${extrasContent.length})`}
+                  </h4>
                   
                   {extrasContent.length > 0 ? (
-                    <div className="grid grid-cols-1 gap-4">
-                      {extrasContent.map((extras) => (
-                        <ExtrasCard
-                          key={extras.title}
-                          extras={extras}
-                          onPlay={() => handleExtrasPlay(extras)}
-                        />
+                    <div className="grid gap-4">
+                      {extrasContent.map((extras, index) => (
+                        <div key={index} className="border rounded-lg p-4 space-y-2">
+                          <div className="flex items-start justify-between">
+                            <div className="space-y-1">
+                              <h5 className="font-medium">{extras.title}</h5>
+                              <p className="text-sm text-muted-foreground">{extras.description}</p>
+                              <Badge variant="outline" className="text-xs">{extras.contentType}</Badge>
+                            </div>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleExtrasPlay(extras)}
+                              className="tap-target"
+                            >
+                              <Play className="w-4 h-4 mr-1" />
+                              Play
+                            </Button>
+                          </div>
+                        </div>
                       ))}
                     </div>
                   ) : (
-                    <div className="text-center py-8">
-                      <FileText className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-                      <h3 className="text-lg font-semibold text-foreground mb-2">No extras available</h3>
-                      <p className="text-muted-foreground">
-                        Behind-the-scenes content, interviews, and documentaries will appear here when available.
-                      </p>
-                    </div>
+                    <p className="text-sm text-muted-foreground text-center py-8">
+                      No bonus content available for this movie yet.
+                    </p>
                   )}
                 </TabsContent>
               </Tabs>
@@ -476,75 +486,28 @@ export function MovieDialog({ movie, open, onOpenChange, onWatchPartyCreate }: M
         </DialogContent>
       </Dialog>
 
-      <ExtrasPlayerDialog
-        extras={selectedExtras}
-        open={showExtrasDialog}
-        onOpenChange={setShowExtrasDialog}
-      />
-    </>
-  );
-}
-
-interface ExtrasCardProps {
-  extras: ExtrasContent;
-  onPlay: () => void;
-}
-
-function ExtrasCard({ extras, onPlay }: ExtrasCardProps) {
-  return (
-    <div className="flex gap-4 p-3 border rounded-lg hover:bg-accent/50 transition-colors cursor-pointer" onClick={onPlay}>
-      <div className="relative w-32 h-20 shrink-0 rounded overflow-hidden bg-muted">
-        <img
-          src={`/assets/generated/${extras.thumbnailPath}`}
-          alt={extras.title}
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 flex items-center justify-center bg-black/40">
-          <Play className="w-8 h-8 text-white" />
-        </div>
-      </div>
-      <div className="flex-1 min-w-0">
-        <h5 className="font-medium text-sm truncate">{extras.title}</h5>
-        <p className="text-xs text-muted-foreground line-clamp-2 mt-1">{extras.description}</p>
-        <Badge variant="outline" className="mt-2 text-xs">{extras.contentType}</Badge>
-      </div>
-    </div>
-  );
-}
-
-interface ExtrasPlayerDialogProps {
-  extras: ExtrasContent | null;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-}
-
-function ExtrasPlayerDialog({ extras, open, onOpenChange }: ExtrasPlayerDialogProps) {
-  const { data: videoUrl } = useFileUrl(extras?.videoPath || '');
-
-  if (!extras) return null;
-
-  return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl">
-        <DialogHeader>
-          <DialogTitle>{extras.title}</DialogTitle>
-        </DialogHeader>
-        <div className="space-y-4">
-          {videoUrl && (
+      {/* Extras Dialog */}
+      {selectedExtras && (
+        <Dialog open={showExtrasDialog} onOpenChange={setShowExtrasDialog}>
+          <DialogContent className="max-w-4xl max-h-[90dvh]">
+            <DialogHeader>
+              <DialogTitle>{selectedExtras.title}</DialogTitle>
+            </DialogHeader>
             <div className="aspect-video rounded-lg overflow-hidden bg-black">
               <video
                 controls
-                autoPlay
+                playsInline
                 className="w-full h-full"
+                autoPlay
               >
-                <source src={videoUrl} type="video/mp4" />
+                <source src={selectedExtras.videoPath} type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
             </div>
-          )}
-          <p className="text-sm text-muted-foreground">{extras.description}</p>
-        </div>
-      </DialogContent>
-    </Dialog>
+            <p className="text-sm text-muted-foreground">{selectedExtras.description}</p>
+          </DialogContent>
+        </Dialog>
+      )}
+    </>
   );
 }

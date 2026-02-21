@@ -1,13 +1,14 @@
 # Specification
 
 ## Summary
-**Goal:** Optimize TamriStream for low-bandwidth African markets with adaptive streaming, data usage tracking, and PWA capabilities.
+**Goal:** Diagnose and fix complete mobile functionality failure preventing the application from working on mobile devices.
 
 **Planned changes:**
-- Add low-bandwidth mode toggle with automatic quality adjustment (240p to 1080p) based on connection speed
-- Implement data usage indicators showing MB consumed per video and cumulative usage statistics
-- Enable Progressive Web App features including offline access, home screen installation, and service worker caching
-- Implement adaptive streaming that starts at lower quality and upgrades smoothly based on bandwidth
-- Create mobile-optimized Data & Bandwidth settings panel with connection speed test and cellular/WiFi preferences
+- Investigate and fix critical JavaScript errors preventing app loading on mobile browsers
+- Fix Internet Identity authentication flow for mobile devices (redirect URL handling and login completion)
+- Verify and fix touch event handlers for all interactive elements (buttons, cards, navigation, video controls, dialogs)
+- Fix mobile viewport rendering issues (scaling, scroll behavior, layout overflow)
+- Test and fix service worker caching strategy on mobile browsers
+- Add comprehensive mobile device debugging capability (error logging, network monitoring, device info display)
 
-**User-visible outcome:** Users in low-bandwidth regions can watch videos with automatic quality optimization, track data consumption in real-time, install the app to their home screen, and access previously viewed content offline.
+**User-visible outcome:** The application loads and functions completely on mobile devices. Users can authenticate via Internet Identity, navigate the app, interact with all buttons and controls using touch, and view content properly on mobile screens.

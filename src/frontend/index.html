@@ -3,15 +3,60 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/assets/generated/app-logo.dim_512x512.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- Critical viewport configuration for mobile -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover" />
+    
+    <!-- Theme and PWA meta tags -->
     <meta name="theme-color" content="#f59e0b" />
     <meta name="description" content="Stream African movies, series, music, and sports. Anywhere, anytime." />
+    
+    <!-- Mobile web app configuration -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="TamriStream" />
+    
+    <!-- Prevent automatic phone number detection -->
+    <meta name="format-detection" content="telephone=no" />
+    
+    <!-- PWA manifest -->
     <link rel="manifest" href="/manifest.json" />
     <link rel="apple-touch-icon" href="/assets/generated/app-logo.dim_512x512.png" />
+    
     <title>TamriStream - African Movies & Series</title>
+    
+    <!-- Inline critical error handler -->
+    <script>
+      // Early error detection before React loads
+      window.addEventListener('error', function(e) {
+        console.error('[Early Error]', e.message, e.filename, e.lineno);
+      });
+      
+      // Log initial load
+      console.log('[HTML] Document loading started', {
+        timestamp: new Date().toISOString(),
+        userAgent: navigator.userAgent,
+        viewport: window.innerWidth + 'x' + window.innerHeight
+      });
+    </script>
+    
+    <!-- Preconnect to improve performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Fallback for JavaScript disabled -->
+    <noscript>
+      <div style="display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; background: #000; color: #fff; font-family: system-ui, -apple-system, sans-serif; text-align: center;">
+        <div>
+          <h1 style="font-size: 24px; margin-bottom: 16px; color: #f59e0b;">JavaScript Required</h1>
+          <p style="color: #999;">Please enable JavaScript to use TamriStream.</p>
+        </div>
+      </div>
+    </noscript>
   </body>
 </html>

@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Film, Menu, X } from 'lucide-react';
 import { Link, useNavigate } from '@tanstack/react-router';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useInternetIdentity } from '../hooks/useInternetIdentity';
 import { useQueryClient } from '@tanstack/react-query';
 import { useIsAdmin } from '../hooks/useQueries';
@@ -25,6 +25,23 @@ export function Header() {
   const disabled = loginStatus === 'logging-in';
   const buttonText = loginStatus === 'logging-in' ? 'Logging in...' : isAuthenticated ? 'Logout' : 'Login';
 
+  // Close mobile menu on route change
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [navigate]);
+
+  // Prevent body scroll when mobile menu is open
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileMenuOpen]);
+
   const handleAuth = async () => {
     if (isAuthenticated) {
       await clear();
@@ -43,6 +60,14 @@ export function Header() {
     }
   };
 
+  const handleMobileMenuToggle = () => {
+    setMobileMenuOpen(prev => !prev);
+  };
+
+  const closeMobileMenu = () => {
+    setMobileMenuOpen(false);
+  };
+
   const navItems = [
     { label: 'Movies', path: '/movies' },
     { label: 'Music', path: '/music-streaming' },
@@ -56,7 +81,11 @@ export function Header() {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
+          <Link 
+            to="/" 
+            className="flex items-center space-x-2 hover:opacity-80 transition-opacity tap-target"
+            onClick={closeMobileMenu}
+          >
             <img 
               src="/assets/generated/app-logo.dim_512x512.png" 
               alt="TamriStream" 
@@ -73,7 +102,7 @@ export function Header() {
               <Link
                 key={item.path}
                 to={item.path}
-                className="px-4 py-2 text-sm font-medium text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors"
+                className="px-4 py-2 text-sm font-medium text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors tap-target"
               >
                 {item.label}
               </Link>
@@ -82,22 +111,22 @@ export function Header() {
             {isAdmin && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="text-amber-500 hover:text-amber-400 hover:bg-zinc-800">
+                  <Button variant="ghost" className="text-amber-500 hover:text-amber-400 hover:bg-zinc-800 tap-target">
                     Admin
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
-                  <DropdownMenuItem onClick={() => navigate({ to: '/admin-approval' })}>
+                  <DropdownMenuItem onClick={() => navigate({ to: '/admin-approval' })} className="tap-target">
                     Content Approval
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate({ to: '/admin-partnership' })}>
+                  <DropdownMenuItem onClick={() => navigate({ to: '/admin-partnership' })} className="tap-target">
                     Partnership Applications
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate({ to: '/reviewer-dashboard' })}>
+                  <DropdownMenuItem onClick={() => navigate({ to: '/reviewer-dashboard' })} className="tap-target">
                     Reviewer Dashboard
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => navigate({ to: '/diagnostics' })}>
+                  <DropdownMenuItem onClick={() => navigate({ to: '/diagnostics' })} className="tap-target">
                     Diagnostics
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -106,15 +135,18 @@ export function Header() {
           </nav>
 
           {/* Right Side Actions */}
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-2 sm:space-x-3">
             <OfflineIndicator />
             
             {isAuthenticated && (
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => navigate({ to: '/profile' })}
-                className="hidden md:flex text-zinc-300 hover:text-white"
+                onClick={() => {
+                  navigate({ to: '/profile' });
+                  closeMobileMenu();
+                }}
+                className="hidden md:flex text-zinc-300 hover:text-white tap-target"
               >
                 Profile
               </Button>
@@ -124,7 +156,7 @@ export function Header() {
               onClick={handleAuth}
               disabled={disabled}
               size="sm"
-              className={`${
+              className={`tap-target ${
                 isAuthenticated
                   ? 'bg-zinc-800 hover:bg-zinc-700 text-white'
                   : 'bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-black font-semibold'
@@ -137,8 +169,10 @@ export function Header() {
             <Button
               variant="ghost"
               size="icon"
-              className="lg:hidden text-white"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="lg:hidden text-white tap-target"
+              onClick={handleMobileMenuToggle}
+              aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={mobileMenuOpen}
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </Button>
@@ -147,14 +181,14 @@ export function Header() {
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="lg:hidden py-4 border-t border-zinc-800">
-            <nav className="flex flex-col space-y-2">
+          <div className="lg:hidden py-4 border-t border-zinc-800 animate-slide-in">
+            <nav className="flex flex-col space-y-1">
               {navItems.map((item) => (
                 <Link
                   key={item.path}
                   to={item.path}
-                  className="px-4 py-3 text-sm font-medium text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors"
-                  onClick={() => setMobileMenuOpen(false)}
+                  className="px-4 py-3 text-base font-medium text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors tap-target active:bg-zinc-700"
+                  onClick={closeMobileMenu}
                 >
                   {item.label}
                 </Link>
@@ -163,8 +197,8 @@ export function Header() {
               {isAuthenticated && (
                 <Link
                   to="/profile"
-                  className="px-4 py-3 text-sm font-medium text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors"
-                  onClick={() => setMobileMenuOpen(false)}
+                  className="px-4 py-3 text-base font-medium text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors tap-target active:bg-zinc-700"
+                  onClick={closeMobileMenu}
                 >
                   Profile
                 </Link>
@@ -172,32 +206,32 @@ export function Header() {
 
               {isAdmin && (
                 <>
-                  <div className="px-4 py-2 text-xs font-semibold text-amber-500 uppercase">Admin</div>
+                  <div className="px-4 py-2 text-xs font-semibold text-amber-500 uppercase mt-2">Admin</div>
                   <Link
                     to="/admin-approval"
-                    className="px-4 py-3 text-sm font-medium text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors"
-                    onClick={() => setMobileMenuOpen(false)}
+                    className="px-4 py-3 text-base font-medium text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors tap-target active:bg-zinc-700"
+                    onClick={closeMobileMenu}
                   >
                     Content Approval
                   </Link>
                   <Link
                     to="/admin-partnership"
-                    className="px-4 py-3 text-sm font-medium text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors"
-                    onClick={() => setMobileMenuOpen(false)}
+                    className="px-4 py-3 text-base font-medium text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors tap-target active:bg-zinc-700"
+                    onClick={closeMobileMenu}
                   >
                     Partnership Applications
                   </Link>
                   <Link
                     to="/reviewer-dashboard"
-                    className="px-4 py-3 text-sm font-medium text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors"
-                    onClick={() => setMobileMenuOpen(false)}
+                    className="px-4 py-3 text-base font-medium text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors tap-target active:bg-zinc-700"
+                    onClick={closeMobileMenu}
                   >
                     Reviewer Dashboard
                   </Link>
                   <Link
                     to="/diagnostics"
-                    className="px-4 py-3 text-sm font-medium text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors"
-                    onClick={() => setMobileMenuOpen(false)}
+                    className="px-4 py-3 text-base font-medium text-zinc-300 hover:text-white hover:bg-zinc-800 rounded-lg transition-colors tap-target active:bg-zinc-700"
+                    onClick={closeMobileMenu}
                   >
                     Diagnostics
                   </Link>

@@ -90,6 +90,7 @@ actor TamriStream {
   var futureAddOns = textMap.empty<FutureAddOn>();
   var contentOwnership = textMap.empty<Principal>();
   var stripeConfig : ?Stripe.StripeConfiguration = null;
+  var checkoutSessions = textMap.empty<Principal>();
   var fallbackContent : FeaturedContent = {
     movies = [
       {
@@ -1148,6 +1149,13 @@ actor TamriStream {
     };
   };
 
+  func isSessionOwner(sessionId : Text, principal : Principal) : Bool {
+    switch (textMap.get(checkoutSessions, sessionId)) {
+      case (null) { false };
+      case (?owner) { owner == principal };
+    };
+  };
+
   // ============================================
   // CREATOR VERIFICATION
   // ============================================
@@ -1330,8 +1338,8 @@ actor TamriStream {
   };
 
   public shared ({ caller }) func logRoyaltyEvent(contentId : Text, eventType : Text, amount : Nat, details : Text) : async () {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
-      Debug.trap("Unauthorized: Only users can log events");
+    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
+      Debug.trap("Unauthorized: Only admins can log royalty events");
     };
 
     switch (textMap.get(smartRoyalties, contentId)) {
@@ -1339,10 +1347,6 @@ actor TamriStream {
         Debug.trap("Smart royalty not found");
       };
       case (?smartRoyalty) {
-        if (smartRoyalty.creator != caller and not AccessControl.isAdmin(accessControlState, caller)) {
-          Debug.trap("Unauthorized: Only the creator or admin can log events");
-        };
-
         let event : RoyaltyEvent = {
           eventType;
           amount;
@@ -1354,6 +1358,7 @@ actor TamriStream {
         let updatedRoyalty : SmartRoyalty = {
           smartRoyalty with
           eventLog = List.push(event, smartRoyalty.eventLog);
+          totalEarnings = smartRoyalty.totalEarnings + amount;
           lastUpdated = Time.now();
         };
         smartRoyalties := textMap.put(smartRoyalties, contentId, updatedRoyalty);
@@ -1362,8 +1367,8 @@ actor TamriStream {
   };
 
   public shared ({ caller }) func updateRoyaltyEarnings(contentId : Text, amount : Nat) : async () {
-    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
-      Debug.trap("Unauthorized: Only users can update earnings");
+    if (not (AccessControl.hasPermission(accessControlState, caller, #admin))) {
+      Debug.trap("Unauthorized: Only admins can update royalty earnings");
     };
 
     switch (textMap.get(smartRoyalties, contentId)) {
@@ -1371,10 +1376,6 @@ actor TamriStream {
         Debug.trap("Smart royalty not found");
       };
       case (?smartRoyalty) {
-        if (smartRoyalty.creator != caller and not AccessControl.isAdmin(accessControlState, caller)) {
-          Debug.trap("Unauthorized: Only the content owner or admin can update earnings");
-        };
-
         let updatedRoyalty : SmartRoyalty = {
           smartRoyalty with
           totalEarnings = smartRoyalty.totalEarnings + amount;
@@ -2025,6 +2026,11 @@ actor TamriStream {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Debug.trap("Unauthorized: Only users can check session status");
     };
+
+    if (not isSessionOwner(sessionId, caller) and not AccessControl.isAdmin(accessControlState, caller)) {
+      Debug.trap("Unauthorized: Can only check your own session status");
+    };
+
     await Stripe.getSessionStatus(getStripeConfiguration(), sessionId, transform);
   };
 
@@ -2032,7 +2038,10 @@ actor TamriStream {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Debug.trap("Unauthorized: Only users can create checkout sessions");
     };
-    await Stripe.createCheckoutSession(getStripeConfiguration(), caller, items, successUrl, cancelUrl, transform);
+
+    let sessionId = await Stripe.createCheckoutSession(getStripeConfiguration(), caller, items, successUrl, cancelUrl, transform);
+    checkoutSessions := textMap.put(checkoutSessions, sessionId, caller);
+    sessionId;
   };
 
   public query func transform(input : OutCall.TransformationInput) : async OutCall.TransformationOutput {

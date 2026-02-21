@@ -2,75 +2,13 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-implement-low-bandwidth-mode-toggle-in-the-video-player-that-automatically-adjusts-streaming-quality-based-on-the-user-s-connection-speed-the-system-should-detect-connection-speed-and-switch-between-quality-levels-240p-360p-480p-720p-1080p-dynamically-without-user-intervention-when-low-bandwidth-mode-is-enabled",
-      "featureTitle": "Implement low-bandwidth mode toggle in the video player that automatically adjusts streaming quality based on the user's connection speed. The system should detect connection speed and switch between quality levels (240p, 360p, 480p, 720p, 1080p) dynamically without user intervention when low-bandwidth mode is enabled.",
-      "files": [
-        "frontend/src/components/MovieDialog.tsx",
-        "frontend/src/components/VideoQualitySelector.tsx",
-        "frontend/src/hooks/useBandwidthMonitor.ts",
-        "frontend/src/hooks/useLowBandwidthMode.ts"
-      ],
-      "components": [
-        "authorization@1.0.1",
-        "blob-storage@1.1.2",
-        "stripe@1.0.1",
-        "user-approval@1.0.0",
-        "camera@1.0.0",
-        "http-outcalls@1.1.1",
-        "invite-links@1.0.1",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-1"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-add-data-usage-indicators-throughout-the-platform-that-show-mb-consumed-per-video-during-playback-display-estimated-data-usage-before-video-starts-based-on-selected-quality-and-real-time-data-consumption-during-playback-include-cumulative-daily-weekly-data-usage-stats-in-user-settings",
-      "featureTitle": "Add data usage indicators throughout the platform that show MB consumed per video during playback. Display estimated data usage before video starts based on selected quality, and real-time data consumption during playback. Include cumulative daily/weekly data usage stats in user settings.",
-      "files": [
-        "frontend/src/components/DataUsageEstimator.tsx",
-        "frontend/src/components/DataUsageIndicator.tsx",
-        "frontend/src/components/DataUsageSettings.tsx",
-        "frontend/src/components/MovieDialog.tsx",
-        "frontend/src/components/UserProfile.tsx",
-        "frontend/src/hooks/useDataUsageTracker.ts"
-      ],
-      "components": [
-        "authorization@1.0.1",
-        "blob-storage@1.1.2",
-        "stripe@1.0.1",
-        "user-approval@1.0.0",
-        "camera@1.0.0",
-        "http-outcalls@1.1.1",
-        "invite-links@1.0.1",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0"
-      ],
-      "testIds": [
-        "REQ-2"
-      ],
-      "confidence": "high"
-    },
-    {
-      "featureId": "feature-implement-progressive-web-app-pwa-features-including-offline-access-for-downloaded-content-home-screen-installation-prompt-and-app-like-experience-on-mobile-devices-configure-service-worker-to-cache-essential-assets-and-enable-offline-browsing-of-previously-viewed-content",
-      "featureTitle": "Implement Progressive Web App (PWA) features including offline access for downloaded content, home screen installation prompt, and app-like experience on mobile devices. Configure service worker to cache essential assets and enable offline browsing of previously viewed content.",
+      "featureId": "feature-investigate-and-fix-critical-javascript-errors-preventing-the-entire-application-from-loading-or-functioning-on-mobile-devices-by-examining-browser-console-logs-service-worker-registration-and-main-bundle-loading",
+      "featureTitle": "Investigate and fix critical JavaScript errors preventing the entire application from loading or functioning on mobile devices by examining browser console logs, service worker registration, and main bundle loading",
       "files": [
         "frontend/index.html",
-        "frontend/public/manifest.json",
-        "frontend/src/App.tsx",
-        "frontend/src/components/Header.tsx",
-        "frontend/src/components/InstallPromptBanner.tsx",
-        "frontend/src/components/OfflineIndicator.tsx",
-        "frontend/src/hooks/useInstallPrompt.ts",
-        "frontend/src/hooks/useOfflineStatus.ts"
+        "frontend/public/sw.js",
+        "frontend/src/components/ErrorBoundary.tsx",
+        "frontend/src/sw/registerServiceWorker.ts"
       ],
       "components": [
         "authorization@1.0.1",
@@ -87,16 +25,15 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-3"
+        "REQ-7"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-implement-adaptive-streaming-that-starts-videos-at-lower-quality-240p-or-360p-and-smoothly-upgrades-quality-based-on-available-bandwidth-without-buffering-monitor-network-conditions-in-real-time-and-adjust-quality-preemptively-to-prevent-interruptions",
-      "featureTitle": "Implement adaptive streaming that starts videos at lower quality (240p or 360p) and smoothly upgrades quality based on available bandwidth without buffering. Monitor network conditions in real-time and adjust quality preemptively to prevent interruptions.",
+      "featureId": "feature-verify-and-fix-touch-event-handlers-across-all-interactive-elements-including-buttons-cards-navigation-links-video-controls-and-dialog-overlays-to-ensure-they-respond-properly-to-mobile-touch-inputs",
+      "featureTitle": "Verify and fix touch event handlers across all interactive elements including buttons, cards, navigation links, video controls, and dialog overlays to ensure they respond properly to mobile touch inputs",
       "files": [
-        "frontend/src/components/MovieDialog.tsx",
-        "frontend/src/hooks/useAdaptiveStreaming.ts"
+        "frontend/src/index.css"
       ],
       "components": [
         "authorization@1.0.1",
@@ -113,20 +50,16 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-4"
+        "REQ-9"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-add-a-mobile-optimized-settings-panel-specifically-for-bandwidth-and-data-management-include-controls-for-default-video-quality-low-bandwidth-mode-toggle-autoplay-preferences-on-cellular-vs-wifi-data-usage-tracking-and-connection-speed-test-utility",
-      "featureTitle": "Add a mobile-optimized settings panel specifically for bandwidth and data management. Include controls for: default video quality, low-bandwidth mode toggle, autoplay preferences on cellular vs WiFi, data usage tracking, and connection speed test utility.",
+      "featureId": "feature-fix-mobile-viewport-rendering-issues-including-proper-scaling-scroll-behavior-and-layout-overflow-that-may-be-preventing-content-from-displaying-correctly-on-mobile-screens",
+      "featureTitle": "Fix mobile viewport rendering issues including proper scaling, scroll behavior, and layout overflow that may be preventing content from displaying correctly on mobile screens",
       "files": [
-        "frontend/src/components/BandwidthSettingsPanel.tsx",
-        "frontend/src/components/ConnectionSpeedTest.tsx",
-        "frontend/src/components/MovieDialog.tsx",
-        "frontend/src/components/UserProfile.tsx",
-        "frontend/src/hooks/useBandwidthSettings.ts",
-        "frontend/src/hooks/useConnectionSpeedTest.ts"
+        "frontend/index.html",
+        "frontend/src/index.css"
       ],
       "components": [
         "authorization@1.0.1",
@@ -143,7 +76,33 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-5"
+        "REQ-10"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-test-and-fix-service-worker-caching-strategy-on-mobile-browsers-to-ensure-proper-asset-loading-offline-functionality-and-cache-updates-without-blocking-app-initialization",
+      "featureTitle": "Test and fix service worker caching strategy on mobile browsers to ensure proper asset loading, offline functionality, and cache updates without blocking app initialization",
+      "files": [
+        "frontend/public/sw.js",
+        "frontend/src/sw/registerServiceWorker.ts"
+      ],
+      "components": [
+        "authorization@1.0.1",
+        "blob-storage@1.1.2",
+        "stripe@1.0.1",
+        "user-approval@1.0.0",
+        "camera@1.0.0",
+        "http-outcalls@1.1.1",
+        "invite-links@1.0.1",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-11"
       ],
       "confidence": "high"
     }

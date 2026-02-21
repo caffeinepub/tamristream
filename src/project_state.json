@@ -1,66 +1,114 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 3,
-  "summary": "TamriStream - African streaming platform with on-chain royalties, creator tools, and community features. Currently enhancing mobile optimization for low-bandwidth African markets.",
-  "architectural_notes": [
-    "TamriStream targets African markets with mobile-first approach",
-    "Platform features on-chain royalty tracking and NFT ownership for content",
-    "Creator revenue split: 70-90% to creators with instant withdrawals",
-    "Existing features: analytics dashboard, creator academy, fan clubs, live events, AI recommendations"
+  "projectStateVersion": 7,
+  "summary": "New project",
+  "architectural_notes": [],
+  "known_issues": [
+    "Mobile phone compatibility issues - app not working on mobile devices",
+    "Version 202 tested on mobile - nothing is working (complete functionality failure)"
   ],
-  "known_issues": [],
-  "isFixRequest": false,
+  "isFixRequest": true,
   "existing_features": [
     {
-      "id": "feature-implement-low-bandwidth-mode-toggle-in-the-video-player-that-automatically-adjusts-streaming-quality-based-on-the-user-s-connection-speed-the-system-should-detect-connection-speed-and-switch-between-quality-levels-240p-360p-480p-720p-1080p-dynamically-without-user-intervention-when-low-bandwidth-mode-is-enabled",
-      "title": "Implement low-bandwidth mode toggle in the video player that automatically adjusts streaming quality based on the user's connection speed. The system should detect connection speed and switch between quality levels (240p, 360p, 480p, 720p, 1080p) dynamically without user intervention when low-bandwidth mode is enabled.",
+      "id": "feature-diagnose-and-fix-mobile-phone-compatibility-issues-preventing-the-app-from-working-on-mobile-devices",
+      "title": "Diagnose and fix mobile phone compatibility issues preventing the app from working on mobile devices",
       "reqIds": [
         "REQ-1"
       ],
       "version": 1
     },
     {
-      "id": "feature-add-data-usage-indicators-throughout-the-platform-that-show-mb-consumed-per-video-during-playback-display-estimated-data-usage-before-video-starts-based-on-selected-quality-and-real-time-data-consumption-during-playback-include-cumulative-daily-weekly-data-usage-stats-in-user-settings",
-      "title": "Add data usage indicators throughout the platform that show MB consumed per video during playback. Display estimated data usage before video starts based on selected quality, and real-time data consumption during playback. Include cumulative daily/weekly data usage stats in user settings.",
+      "id": "feature-fix-mobile-responsive-layout-issues-in-header-component-ensuring-the-mobile-menu-toggles-correctly-and-navigation-links-are-accessible",
+      "title": "Fix mobile responsive layout issues in Header component, ensuring the mobile menu toggles correctly and navigation links are accessible",
       "reqIds": [
         "REQ-2"
       ],
       "version": 1
     },
     {
-      "id": "feature-implement-progressive-web-app-pwa-features-including-offline-access-for-downloaded-content-home-screen-installation-prompt-and-app-like-experience-on-mobile-devices-configure-service-worker-to-cache-essential-assets-and-enable-offline-browsing-of-previously-viewed-content",
-      "title": "Implement Progressive Web App (PWA) features including offline access for downloaded content, home screen installation prompt, and app-like experience on mobile devices. Configure service worker to cache essential assets and enable offline browsing of previously viewed content.",
-      "reqIds": [
-        "REQ-3"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-implement-adaptive-streaming-that-starts-videos-at-lower-quality-240p-or-360p-and-smoothly-upgrades-quality-based-on-available-bandwidth-without-buffering-monitor-network-conditions-in-real-time-and-adjust-quality-preemptively-to-prevent-interruptions",
-      "title": "Implement adaptive streaming that starts videos at lower quality (240p or 360p) and smoothly upgrades quality based on available bandwidth without buffering. Monitor network conditions in real-time and adjust quality preemptively to prevent interruptions.",
+      "id": "feature-fix-viewport-meta-tag-configuration-and-ensure-proper-mobile-scaling-in-index-html",
+      "title": "Fix viewport meta tag configuration and ensure proper mobile scaling in index.html",
       "reqIds": [
         "REQ-4"
       ],
       "version": 1
     },
     {
-      "id": "feature-add-a-mobile-optimized-settings-panel-specifically-for-bandwidth-and-data-management-include-controls-for-default-video-quality-low-bandwidth-mode-toggle-autoplay-preferences-on-cellular-vs-wifi-data-usage-tracking-and-connection-speed-test-utility",
-      "title": "Add a mobile-optimized settings panel specifically for bandwidth and data management. Include controls for: default video quality, low-bandwidth mode toggle, autoplay preferences on cellular vs WiFi, data usage tracking, and connection speed test utility.",
+      "id": "feature-investigate-and-fix-critical-javascript-errors-preventing-the-entire-application-from-loading-or-functioning-on-mobile-devices-by-examining-browser-console-logs-service-worker-registration-and-main-bundle-loading",
+      "title": "Investigate and fix critical JavaScript errors preventing the entire application from loading or functioning on mobile devices by examining browser console logs, service worker registration, and main bundle loading",
       "reqIds": [
-        "REQ-5"
+        "REQ-7"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-verify-and-fix-touch-event-handlers-across-all-interactive-elements-including-buttons-cards-navigation-links-video-controls-and-dialog-overlays-to-ensure-they-respond-properly-to-mobile-touch-inputs",
+      "title": "Verify and fix touch event handlers across all interactive elements including buttons, cards, navigation links, video controls, and dialog overlays to ensure they respond properly to mobile touch inputs",
+      "reqIds": [
+        "REQ-9"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-fix-mobile-viewport-rendering-issues-including-proper-scaling-scroll-behavior-and-layout-overflow-that-may-be-preventing-content-from-displaying-correctly-on-mobile-screens",
+      "title": "Fix mobile viewport rendering issues including proper scaling, scroll behavior, and layout overflow that may be preventing content from displaying correctly on mobile screens",
+      "reqIds": [
+        "REQ-10"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-test-and-fix-service-worker-caching-strategy-on-mobile-browsers-to-ensure-proper-asset-loading-offline-functionality-and-cache-updates-without-blocking-app-initialization",
+      "title": "Test and fix service worker caching strategy on mobile browsers to ensure proper asset loading, offline functionality, and cache updates without blocking app initialization",
+      "reqIds": [
+        "REQ-11"
       ],
       "version": 1
     }
   ],
   "new_feature_requests": [
     {
-      "id": "AR-1",
-      "summary": "Add mobile optimization features: low-bandwidth mode, data usage indicators, PWA features, and adaptive streaming",
-      "reqIds": [],
+      "id": "AR-3",
+      "summary": "Verify and fix touch event handling across all interactive components (buttons, cards, sliders, dialogs) to ensure proper mobile interaction",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Test and fix service worker functionality on mobile devices to ensure proper caching and offline capabilities",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "Verify Internet Identity authentication flow works correctly on mobile browsers, including redirect handling",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-8",
+      "summary": "Fix Internet Identity authentication flow for mobile browsers, ensuring the redirect URL handling works correctly and users can complete login on mobile devices",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-12",
+      "summary": "Add comprehensive mobile device debugging capability including error logging, network request monitoring, and device information display to identify root causes of mobile failures",
+      "reqIds": [
+        "REQ-12"
+      ],
       "status": "pending"
     }
   ],
-  "projectName": "TamriStream",
+  "projectName": "Retry deployment after technical error",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

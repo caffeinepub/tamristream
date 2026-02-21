@@ -1,233 +1,263 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Add mobile optimization for low-bandwidth African markets",
+  "title": "Diagnose and fix complete mobile functionality failure in Version 202",
   "requirements": [
     {
-      "id": "REQ-1",
-      "summary": "Implement low-bandwidth mode toggle with automatic quality adjustment based on connection speed",
+      "id": "REQ-7",
+      "summary": "Investigate and fix critical JavaScript errors preventing the entire application from loading or functioning on mobile devices",
       "acceptanceCriteria": [
-        "User can toggle low-bandwidth mode on/off in settings or video player controls",
-        "System automatically detects connection speed and adjusts video quality accordingly",
-        "Quality switches happen seamlessly without buffering or playback interruption",
-        "Current quality level is visibly indicated in the player UI",
-        "Mode preference persists across sessions in localStorage"
+        "Application loads successfully on mobile browsers (iOS Safari, Chrome Android)",
+        "No critical JavaScript errors in mobile browser console",
+        "Main React application renders and mounts correctly",
+        "Service worker registers without errors"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/hooks/useBandwidthMonitor.ts",
-          "operation": "create",
-          "description": "Create custom hook for real-time bandwidth detection using Network Information API and fallback performance monitoring. Detects connection speed and returns quality recommendations (240p, 360p, 480p, 720p, 1080p). Exports bandwidth state, quality recommendation, and connection type."
-        },
-        {
-          "path": "frontend/src/hooks/useLowBandwidthMode.ts",
-          "operation": "create",
-          "description": "Create hook to manage low-bandwidth mode state in localStorage. Provides toggle function, current mode state, and quality override capabilities. Persists user preference across sessions."
-        },
-        {
-          "path": "frontend/src/components/VideoQualitySelector.tsx",
-          "operation": "create",
-          "description": "Create quality selector component for video player with manual and auto modes. Shows current quality level with visual indicator, displays low-bandwidth mode toggle, and provides quality selection dropdown. Uses useLowBandwidthMode and useBandwidthMonitor hooks."
-        },
-        {
-          "path": "frontend/src/components/MovieDialog.tsx",
+          "path": "frontend/src/main.tsx",
           "operation": "modify",
-          "description": "Integrate VideoQualitySelector component into video player controls section. Wire up quality state to video element src attribute for quality switching. Add seamless quality transition logic that maintains playback position. Display current quality badge in player UI."
+          "description": "Add mobile-specific error boundary wrapping and early error detection for module loading failures. Include console logging to capture initialization errors that prevent React from mounting."
         },
         {
-          "path": "frontend/src/components/WatchPartyView.tsx",
+          "path": "frontend/src/components/ErrorBoundary.tsx",
           "operation": "modify",
-          "description": "Integrate VideoQualitySelector into watch party video player. Ensure quality adjustments work during synchronized playback. Add quality level visibility for all participants."
-        }
-      ]
-    },
-    {
-      "id": "REQ-2",
-      "summary": "Add data usage indicators showing MB consumed per video with real-time tracking and cumulative statistics",
-      "acceptanceCriteria": [
-        "Video preview shows estimated MB usage for different quality levels before playback",
-        "Real-time data counter displays during video playback showing current session usage",
-        "Settings page shows cumulative data usage statistics (daily, weekly, monthly)",
-        "Data estimates are accurate within 10% margin based on bitrate calculations",
-        "Users can reset data usage statistics manually"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/hooks/useDataUsageTracker.ts",
-          "operation": "create",
-          "description": "Create hook to track video data consumption using localStorage. Calculates bitrate-based estimates for each quality level, tracks real-time usage during playback, stores cumulative statistics (daily/weekly/monthly), and provides reset functionality. Returns current session usage, total usage stats, and estimate calculator function."
+          "description": "Enhance error boundary to detect and report mobile-specific errors including module loading failures, service worker conflicts, and React hydration errors. Add mobile device detection and specialized error messages."
         },
         {
-          "path": "frontend/src/components/DataUsageIndicator.tsx",
-          "operation": "create",
-          "description": "Create component displaying real-time data consumption during video playback. Shows MB counter that updates every few seconds, includes quality-level breakdown, and displays warning indicators when usage is high. Uses useDataUsageTracker hook."
-        },
-        {
-          "path": "frontend/src/components/DataUsageEstimator.tsx",
-          "operation": "create",
-          "description": "Create component showing estimated data usage before video playback. Displays MB estimates for each available quality level (240p through 1080p), includes duration-based calculations, and provides quality recommendation based on available bandwidth. Appears in video preview/selection screens."
-        },
-        {
-          "path": "frontend/src/components/DataUsageSettings.tsx",
-          "operation": "create",
-          "description": "Create settings panel component displaying cumulative data usage statistics. Shows daily, weekly, and monthly consumption with visual charts, includes reset button for clearing statistics, and displays average per-session usage. Uses useDataUsageTracker hook for data."
-        },
-        {
-          "path": "frontend/src/components/MovieDialog.tsx",
+          "path": "frontend/src/sw/registerServiceWorker.ts",
           "operation": "modify",
-          "description": "Add DataUsageEstimator component to movie preview section before playback starts. Integrate DataUsageIndicator into active video player overlay. Wire up data tracking to video element events (play, pause, timeupdate) for accurate measurement."
-        },
-        {
-          "path": "frontend/src/components/UserProfile.tsx",
-          "operation": "modify",
-          "description": "Add DataUsageSettings component as new section in user profile settings. Place it prominently in bandwidth/data management area. Ensure statistics display correctly with formatting (MB, GB) and time periods."
-        },
-        {
-          "path": "frontend/src/components/WatchPartyView.tsx",
-          "operation": "modify",
-          "description": "Integrate DataUsageIndicator into watch party video player overlay. Display real-time consumption alongside other player controls. Ensure tracking works correctly during synchronized playback."
-        }
-      ]
-    },
-    {
-      "id": "REQ-3",
-      "summary": "Implement Progressive Web App features including offline access, home screen installation, and app-like mobile experience",
-      "acceptanceCriteria": [
-        "Users can install the app to their home screen with a native install prompt",
-        "App icon and splash screen display correctly when launched from home screen",
-        "Previously viewed content is accessible offline with cached metadata and thumbnails",
-        "Service worker caches critical UI assets for offline navigation",
-        "App maintains app-like navigation without browser chrome when installed",
-        "Offline indicator displays current connection status and cached content availability"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/public/manifest.json",
-          "operation": "create",
-          "description": "Create PWA manifest with app name (TamriStream), theme colors matching brand identity, display mode standalone for app-like experience, icons array referencing generated/app-logo.png and generated/app-logo.dim_512x512.png at multiple sizes (192x192, 512x512), start_url pointing to root, background_color, and orientation set to any for mobile flexibility."
-        },
-        {
-          "path": "frontend/index.html",
-          "operation": "modify",
-          "description": "Add manifest link tag in head section. Add apple-touch-icon meta tags referencing app logo. Add theme-color meta tag for mobile browser chrome. Ensure existing PWA-related tags are preserved and enhanced."
+          "description": "Add robust error handling for service worker registration failures on mobile browsers. Implement fallback behavior when service worker fails to register, ensuring app continues to load. Add mobile browser detection to adjust registration strategy."
         },
         {
           "path": "frontend/public/sw.js",
           "operation": "modify",
-          "description": "Extend existing service worker to cache movie thumbnails, metadata JSON responses, and frequently accessed images. Add offline fallback page caching. Implement cache-first strategy for static assets and network-first with cache fallback for API calls. Maintain compatibility with existing versioned caching system. Add logic to cache viewed content metadata for offline browsing."
+          "description": "Fix service worker caching strategy that may be blocking critical resources on mobile. Ensure install and activate events don't prevent main bundle from loading. Add error handlers for fetch events that could cause silent failures on mobile networks."
         },
         {
-          "path": "frontend/src/hooks/useInstallPrompt.ts",
-          "operation": "create",
-          "description": "Create hook managing PWA install prompt using beforeinstallprompt event. Captures prompt event, provides install function, tracks installation state in localStorage, and returns isInstallable boolean and promptInstall function. Includes iOS detection for alternative install instructions."
+          "path": "frontend/index.html",
+          "operation": "modify",
+          "description": "Verify viewport meta tag configuration for mobile rendering. Add inline script to detect and log critical JavaScript errors before React loads. Ensure manifest.json and service worker script references are correct."
         },
         {
-          "path": "frontend/src/hooks/useOfflineStatus.ts",
+          "path": "frontend/src/hooks/useMobileErrorLogger.ts",
           "operation": "create",
-          "description": "Create hook monitoring online/offline status using navigator.onLine and online/offline events. Returns connection status, cached content availability from service worker, and sync status. Provides visibility into what content is available offline."
+          "description": "Create custom hook that captures and logs all JavaScript errors, unhandled promise rejections, and module loading failures specifically on mobile devices. Store errors in localStorage for debugging and provide method to export error logs."
+        }
+      ]
+    },
+    {
+      "id": "REQ-8",
+      "summary": "Fix Internet Identity authentication flow for mobile browsers",
+      "acceptanceCriteria": [
+        "Login button responds to touch on mobile",
+        "Internet Identity redirect completes successfully",
+        "User is authenticated and redirected back to app after login",
+        "Authentication state persists correctly on mobile"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/useInternetIdentity.ts",
+          "operation": "modify",
+          "description": "Fix Internet Identity redirect URL handling for mobile browsers. Ensure AuthClient properly handles mobile browser redirects and window focus events. Add mobile-specific session persistence and recovery logic."
         },
         {
-          "path": "frontend/src/components/InstallPromptBanner.tsx",
-          "operation": "create",
-          "description": "Create banner component promoting PWA installation. Uses useInstallPrompt hook to show native prompt or iOS instructions. Displays prominently on mobile devices when installable. Includes dismiss functionality with localStorage persistence. Shows app benefits (offline access, home screen, faster loading)."
+          "path": "frontend/src/components/LoginButton.tsx",
+          "operation": "modify",
+          "description": "Ensure login button has proper touch event handlers and touch-action CSS properties. Add loading state that prevents multiple taps during authentication. Implement mobile-friendly error messages for authentication failures."
         },
         {
-          "path": "frontend/src/components/OfflineIndicator.tsx",
-          "operation": "create",
-          "description": "Create component displaying current connection status and offline capabilities. Uses useOfflineStatus hook. Shows online/offline badge, lists cached content available offline, and displays sync status when connection restored. Appears in header or as floating indicator on mobile."
+          "path": "frontend/src/components/LoginScreen.tsx",
+          "operation": "modify",
+          "description": "Fix authentication flow on mobile by ensuring proper redirect handling after Internet Identity callback. Add mobile browser detection to adjust authentication strategy. Implement fallback for browsers with strict popup/redirect policies."
         },
         {
           "path": "frontend/src/components/Header.tsx",
           "operation": "modify",
-          "description": "Integrate OfflineIndicator component into mobile header layout. Add InstallPromptBanner display logic for non-installed mobile users. Ensure indicators are visible but non-intrusive on mobile screens."
-        },
-        {
-          "path": "frontend/src/App.tsx",
-          "operation": "modify",
-          "description": "Add InstallPromptBanner at top-level for mobile users. Ensure PWA features initialize on app mount. Add offline mode detection that adjusts UI behavior when offline (disable uploads, show cached content only)."
-        },
-        {
-          "path": "frontend/src/components/MovieCatalog.tsx",
-          "operation": "modify",
-          "description": "Add offline filtering to show only cached movies when offline. Display offline badge on cached movie cards. Show helpful message when offline with no cached content. Use useOfflineStatus hook to determine availability."
+          "description": "Verify authentication controls work with touch events. Ensure login/logout buttons in header respond properly to mobile taps. Add visual feedback for touch interactions."
         }
       ]
     },
     {
-      "id": "REQ-4",
-      "summary": "Implement adaptive streaming starting at lower quality and upgrading smoothly based on bandwidth",
+      "id": "REQ-9",
+      "summary": "Verify and fix touch event handlers across all interactive elements",
       "acceptanceCriteria": [
-        "Videos automatically start at 240p or 360p quality on initial load",
-        "System monitors bandwidth continuously during playback",
-        "Quality upgrades happen smoothly without visible buffering or pauses",
-        "Quality downgrades occur preemptively when bandwidth drops to prevent buffering",
-        "User can manually override auto-quality selection if desired",
-        "Smooth transitions between quality levels maintain playback position exactly"
+        "All buttons respond to tap/touch events",
+        "Navigation menu opens and closes on mobile",
+        "Cards and content are tappable",
+        "Video player controls work with touch",
+        "Dialog/modal overlays respond correctly to touch"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/hooks/useAdaptiveStreaming.ts",
-          "operation": "create",
-          "description": "Create hook implementing adaptive streaming logic. Uses useBandwidthMonitor for real-time connection monitoring. Manages quality selection state with auto/manual modes. Implements smooth quality switching algorithm that maintains playback position. Monitors video buffer health and adjusts preemptively. Returns current quality, auto-mode state, quality change function, and buffer status. Starts playback at 240p or 360p by default."
+          "path": "frontend/src/index.css",
+          "operation": "modify",
+          "description": "Add global CSS rules to ensure all interactive elements have proper touch-action properties. Set minimum tap target sizes (44x44px) for accessibility. Add CSS to prevent touch delay and improve touch responsiveness."
         },
         {
-          "path": "frontend/src/components/AdaptiveVideoPlayer.tsx",
-          "operation": "create",
-          "description": "Create video player component with adaptive streaming capabilities. Uses useAdaptiveStreaming hook for quality management. Handles video element ref and quality source switching. Implements seamless transition logic that preserves exact playback position during quality changes. Displays buffer status and quality transition indicators. Supports manual quality override while maintaining auto-adjust capability."
+          "path": "frontend/src/components/Header.tsx",
+          "operation": "modify",
+          "description": "Fix mobile navigation menu touch handlers. Ensure hamburger menu button responds to touch and menu overlay can be dismissed with tap. Add proper z-index and touch event propagation handling."
+        },
+        {
+          "path": "frontend/src/components/MovieCard.tsx",
+          "operation": "modify",
+          "description": "Ensure movie cards respond to touch events. Add touch-action CSS and verify onClick handlers work on mobile. Implement proper touch feedback with active states."
         },
         {
           "path": "frontend/src/components/MovieDialog.tsx",
           "operation": "modify",
-          "description": "Replace standard video element with AdaptiveVideoPlayer component. Wire up quality controls to adaptive streaming hook. Display auto-quality indicator when active. Show smooth quality transitions without buffering interruptions. Maintain all existing player features (play/pause, seeking, volume)."
+          "description": "Fix video player touch controls for mobile. Ensure play/pause, seeking, volume, and fullscreen controls respond to touch. Add mobile-friendly control layout and touch gesture support. Fix dialog overlay touch dismissal."
+        },
+        {
+          "path": "frontend/src/components/FeaturedMovieSlider.tsx",
+          "operation": "modify",
+          "description": "Implement touch swipe gestures for slider navigation on mobile. Ensure navigation buttons respond to touch. Add touch drag support for carousel."
         },
         {
           "path": "frontend/src/components/WatchPartyView.tsx",
           "operation": "modify",
-          "description": "Integrate AdaptiveVideoPlayer into watch party interface. Ensure quality adaptation works with synchronized playback. Display quality levels for host and participants. Handle quality changes without disrupting party sync."
+          "description": "Fix touch interaction for video controls, chat input, and reaction buttons. Ensure all interactive elements within watch party interface respond to mobile touch events."
+        },
+        {
+          "path": "frontend/src/hooks/useTouchFix.ts",
+          "operation": "create",
+          "description": "Create utility hook that ensures touch event compatibility across mobile browsers. Handles touch event polyfills, prevents default behaviors that interfere with interactions, and provides normalized touch event handlers."
         }
       ]
     },
     {
-      "id": "REQ-5",
-      "summary": "Add mobile-optimized settings panel for bandwidth and data management with connection speed test",
+      "id": "REQ-10",
+      "summary": "Fix mobile viewport rendering issues including proper scaling, scroll behavior, and layout overflow",
       "acceptanceCriteria": [
-        "New 'Data & Bandwidth' section appears in user settings",
-        "Users can set default video quality for cellular vs WiFi separately",
-        "Built-in connection speed test shows current download/upload speeds",
-        "Autoplay can be disabled specifically for cellular connections",
-        "All preferences are saved to localStorage and persist across sessions",
-        "Settings panel is touch-optimized with large tap targets for mobile"
+        "Page renders at correct mobile viewport dimensions",
+        "Content is not zoomed or cut off",
+        "Scrolling works smoothly vertically and horizontally where appropriate",
+        "No horizontal overflow causing unwanted side-scrolling"
       ],
       "file_operations": [
         {
-          "path": "frontend/src/hooks/useConnectionSpeedTest.ts",
-          "operation": "create",
-          "description": "Create hook implementing connection speed test. Downloads test files of known sizes, measures transfer time, calculates download/upload speeds in Mbps. Returns test function, isRunning state, and results with speed measurements. Uses timeout handling for slow connections."
-        },
-        {
-          "path": "frontend/src/hooks/useBandwidthSettings.ts",
-          "operation": "create",
-          "description": "Create hook managing bandwidth-related user preferences in localStorage. Stores default quality for WiFi vs cellular, autoplay preferences per connection type, low-bandwidth mode default, and data saver preferences. Provides getters and setters for each preference with persistence. Returns all settings and update functions."
-        },
-        {
-          "path": "frontend/src/components/BandwidthSettingsPanel.tsx",
-          "operation": "create",
-          "description": "Create comprehensive bandwidth settings component with sections for default quality selection (separate WiFi/cellular dropdowns), autoplay preferences with connection-type toggles, low-bandwidth mode default toggle, and connection speed test button with results display. Uses useBandwidthSettings and useConnectionSpeedTest hooks. Mobile-optimized with large touch targets (min 44x44px), clear labels, and spacing. Includes helpful descriptions for each setting."
-        },
-        {
-          "path": "frontend/src/components/ConnectionSpeedTest.tsx",
-          "operation": "create",
-          "description": "Create connection speed test component displaying test controls and results. Shows start test button, running animation during test, and results with download/upload speeds in Mbps. Includes interpretation guidance (slow/medium/fast) and recommended quality settings. Uses useConnectionSpeedTest hook. Mobile-friendly layout with large buttons."
-        },
-        {
-          "path": "frontend/src/components/UserProfile.tsx",
+          "path": "frontend/index.html",
           "operation": "modify",
-          "description": "Add new 'Data & Bandwidth' tab or section to user profile settings. Integrate BandwidthSettingsPanel component prominently. Ensure section is easily discoverable and touch-friendly on mobile. Place near existing data saver mode toggle for logical grouping."
+          "description": "Verify and fix viewport meta tag to prevent zoom issues. Ensure width=device-width, initial-scale=1.0, and maximum-scale=5.0 are set correctly. Add mobile-web-app-capable meta tags."
         },
         {
-          "path": "frontend/src/components/MovieDialog.tsx",
+          "path": "frontend/src/index.css",
           "operation": "modify",
-          "description": "Apply bandwidth settings for autoplay behavior based on connection type. Use useBandwidthSettings to check if autoplay should be disabled on cellular. Apply default quality preference when video loads. Show settings reminder hint if user frequently adjusts quality manually."
+          "description": "Fix body and html elements to prevent horizontal overflow. Add overflow-x: hidden to container elements. Ensure all width values use responsive units. Fix any fixed-width elements that exceed viewport width on mobile."
+        },
+        {
+          "path": "frontend/tailwind.config.js",
+          "operation": "modify",
+          "description": "Review and fix responsive breakpoints for mobile. Ensure container max-widths don't cause horizontal overflow. Add mobile-specific utility classes for safe areas and touch targets."
+        },
+        {
+          "path": "frontend/src/components/Header.tsx",
+          "operation": "modify",
+          "description": "Fix header layout for mobile viewport. Ensure header doesn't overflow horizontally and adjusts properly to screen width. Implement responsive mobile menu that doesn't cause viewport issues."
+        },
+        {
+          "path": "frontend/src/components/MovieCatalog.tsx",
+          "operation": "modify",
+          "description": "Fix movie catalog layout for mobile screens. Ensure grid layouts use responsive columns that don't overflow. Adjust spacing and sizing for mobile viewport."
+        },
+        {
+          "path": "frontend/src/components/Footer.tsx",
+          "operation": "modify",
+          "description": "Fix footer layout for mobile screens. Ensure footer content stacks properly on narrow viewports without horizontal overflow."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Fix main app container to prevent viewport issues. Ensure routing doesn't cause layout shifts or overflow on mobile. Add mobile-specific layout constraints."
+        }
+      ]
+    },
+    {
+      "id": "REQ-11",
+      "summary": "Test and fix service worker caching strategy on mobile browsers",
+      "acceptanceCriteria": [
+        "Service worker installs and activates successfully on mobile",
+        "Cached assets load correctly",
+        "App works in offline mode on mobile",
+        "Service worker updates do not break app functionality"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/public/sw.js",
+          "operation": "modify",
+          "description": "Fix service worker caching strategy for mobile browsers. Ensure install event doesn't block app loading with excessive caching. Implement proper cache versioning and cleanup. Add mobile-specific cache strategies for images and API responses."
+        },
+        {
+          "path": "frontend/src/sw/registerServiceWorker.ts",
+          "operation": "modify",
+          "description": "Fix service worker registration timing and update handling on mobile. Ensure registration doesn't block initial page load. Implement proper update detection and notification for mobile users. Add fallback when service worker fails."
+        },
+        {
+          "path": "frontend/src/hooks/useServiceWorkerDiagnostics.ts",
+          "operation": "modify",
+          "description": "Enhance service worker diagnostics to detect mobile-specific issues. Add checks for registration state, cache status, and update availability. Provide clear status messages for mobile debugging."
+        },
+        {
+          "path": "frontend/src/components/DiagnosticsPage.tsx",
+          "operation": "modify",
+          "description": "Add mobile-specific service worker diagnostics section. Display registration status, cache size, and update availability. Provide buttons to manually update service worker or clear cache on mobile."
+        },
+        {
+          "path": "frontend/src/hooks/useOfflineStatus.ts",
+          "operation": "modify",
+          "description": "Fix offline detection for mobile browsers. Ensure hook properly detects network changes and cached content availability. Add mobile network type detection (WiFi vs cellular)."
+        },
+        {
+          "path": "frontend/src/components/OfflineIndicator.tsx",
+          "operation": "modify",
+          "description": "Enhance offline indicator for mobile with clearer status messages. Show which content is available offline. Provide option to clear cache if service worker is causing issues."
+        }
+      ]
+    },
+    {
+      "id": "REQ-12",
+      "summary": "Add comprehensive mobile device debugging capability",
+      "acceptanceCriteria": [
+        "Detailed error logs accessible on mobile devices",
+        "Network requests and failures are logged",
+        "Device information (browser, OS, viewport) is captured",
+        "Debugging information can be exported or viewed in-app"
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/components/MobileDebugPanel.tsx",
+          "operation": "create",
+          "description": "Create mobile debug panel component that displays captured errors, network logs, device information, and performance metrics. Include floating button to open panel and export logs. Shows browser, OS, viewport size, connection type, and service worker status."
+        },
+        {
+          "path": "frontend/src/hooks/useMobileDebugger.ts",
+          "operation": "create",
+          "description": "Create hook that captures all mobile debugging data including JavaScript errors, network requests, performance metrics, and device information. Stores data in localStorage and provides methods to export or clear logs. Captures user agent, viewport, touch capabilities, and network info."
+        },
+        {
+          "path": "frontend/src/hooks/useNetworkLogger.ts",
+          "operation": "create",
+          "description": "Create hook that intercepts and logs all network requests and responses on mobile. Captures fetch calls, actor calls, and their success/failure status. Stores timing information and error details for debugging."
+        },
+        {
+          "path": "frontend/src/components/DiagnosticsPage.tsx",
+          "operation": "modify",
+          "description": "Add mobile debugging section that displays device information, error logs, network logs, and system health. Include export functionality to download logs for analysis. Add real-time error monitoring display."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Integrate mobile debug panel into app with floating access button for mobile users. Ensure debug tools are easily accessible on mobile devices for troubleshooting. Add global error capture that feeds into debug panel."
+        },
+        {
+          "path": "frontend/src/hooks/useRecentRuntimeErrors.ts",
+          "operation": "modify",
+          "description": "Enhance runtime error capture to include mobile-specific error details like touch event failures, viewport issues, and service worker errors. Add error categorization for easier debugging."
+        },
+        {
+          "path": "frontend/src/lib/mobileDeviceInfo.ts",
+          "operation": "create",
+          "description": "Create utility module that collects comprehensive mobile device information including browser type/version, OS type/version, screen dimensions, pixel ratio, touch support, network type, battery status, and memory information for debugging."
         }
       ]
     }
